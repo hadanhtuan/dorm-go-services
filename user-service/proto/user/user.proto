@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package userService;
+
+import "proto/common/common.proto";
+
+option go_package = "user-service/proto/user-service";
+
+service userService {
+  rpc login(MessageLogin) returns (common.BaseResponse);
+}
+
+message MessageLogin {
+  string username = 1;
+  string deviceId = 3;
+  string password = 4;
+  string userAgent = 5;
+  string ipAddress = 6;
+}
