@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  cache:
+    container_name: redis_cache
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - ${CACHE_PORT}:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${CACHE_PWD}
+    volumes:
+      - cache:/data
+    networks:
+      - dorm
+
+  postgres:
+    container_name: postgres_db
+    restart: always
+    image: postgres:latest
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PWD}
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /data/postgres
+    volumes:
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - postgres-db:/data/postgres
+    ports:
+      - ${DB_PORT}:5432
+    networks:
+      - dorm
+
+networks:
+  dorm:
+    driver: bridge
+
+volumes:
+  cache:
+    driver: local
+  postgres-db:
+    driver: local

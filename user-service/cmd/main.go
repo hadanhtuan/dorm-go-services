@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"user-service/internal"
-	"user-service/internal/model"
-
 	. "github.com/hadanhtuan/go-sdk"
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-
 	config "github.com/hadanhtuan/go-sdk/config"
+	orm "github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
+	"user-service/internal"
+	database "user-service/internal/db"
+	"user-service/internal/model"
 )
 
 func main() {
@@ -17,15 +16,15 @@ func main() {
 	dbOrm := orm.Connect(config.DBOrm)
 	app := App{
 		Config: config,
-		// DBOrm:  dbOrm,
+		DBOrm:  dbOrm,
 	}
 
-	internal.InitGRPC(&app)
-	internal.InitRoute(&app)
 	onDBConnected(dbOrm)
+	internal.InitGRPCServer(&app)
 }
 
 func onDBConnected(db *gorm.DB) {
 	fmt.Println("Connected to DB " + db.Name())
+	database.Migrate(db)
 	model.InitTableUser(db)
 }

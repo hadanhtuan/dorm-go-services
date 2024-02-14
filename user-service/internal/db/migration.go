@@ -9,8 +9,11 @@ import (
 
 func Migrate(db *gorm.DB) {
 	fmt.Printf("Migrate: Start")
-	db.AutoMigrate(
+	err := db.AutoMigrate(
 		&model.User{},
 	)
-	fmt.Printf("Migrate: Success")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Migrate: Success")
 }
