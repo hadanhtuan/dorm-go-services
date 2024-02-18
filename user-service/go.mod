@@ -4,14 +4,14 @@ go 1.21.5
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/hadanhtuan/go-sdk v0.0.0-20240214062240-f6e8c3779229
+	github.com/hadanhtuan/go-sdk v0.0.0-20240218070235-4a52376d94d6
 	google.golang.org/grpc v1.61.1
 	google.golang.org/protobuf v1.32.0
 	gorm.io/gorm v1.25.7
 )
 
 require (
-	github.com/bytedance/sonic v1.10.2 // indirect
+	github.com/bytedance/sonic v1.11.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
