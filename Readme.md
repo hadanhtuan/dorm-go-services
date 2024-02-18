@@ -6,24 +6,8 @@ STEP TO RUN PROJECT
 
 3. install nodemon global: npm i nodemon -g
 
-4. swagger:
-    go install github.com/swaggo/swag/cmd/swag@latest
-    swag init -g ./cmd/main.go -o ./docs
-    swag fmt
-
 5. gen proto
+make -f makefile (choose option 2)
 
-	@protoc --go_out=. --go_opt=paths=source_relative \
-                --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-                proto/common/*.proto
-
-	@protoc --go_out=. --go_opt=paths=source_relative \
-                --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-                proto/user/*.proto
-
-6. get package
-  cd cmd
-  go get .
-
-7. run 
-	nodemon --exec "go run" ./cmd/main.go --signal SIGTERM
+6. run service
+make -f makefile (choose option 1)
