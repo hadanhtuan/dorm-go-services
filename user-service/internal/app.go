@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"google.golang.org/grpc"
 	api "user-service/api"
 	userProto "user-service/proto/user"
-
 	pkg "github.com/hadanhtuan/go-sdk"
-	"google.golang.org/grpc"
 )
 
 func InitGRPCServer(app *pkg.App) error {
