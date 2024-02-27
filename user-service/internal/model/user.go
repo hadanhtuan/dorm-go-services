@@ -33,6 +33,5 @@ var UserDB = &orm.Instance{
 
 func InitTableUser(db *gorm.DB) {
 	db.Table(UserDB.TableName).AutoMigrate(&User{})
-	UserDB.DB = db
 	UserDB.ApplyDatabase(db)
 }

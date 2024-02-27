@@ -14,6 +14,9 @@ service userService {
 message MsgLogin {
   string email = 1;
   string password = 2;
+  string userAgent = 3;
+  string ipAddress = 4;
+  string deviceId = 5;
 }
 
 message MsgRegister {
@@ -21,4 +24,7 @@ message MsgRegister {
   string firstName = 2;
   string lastName = 3;
   string password = 4;
+  string userAgent = 5;
+  string ipAddress = 6;
+  string deviceId = 7;
 }

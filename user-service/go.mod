@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/hadanhtuan/go-sdk v0.0.0-20240226101641-ddb794271371
+	github.com/hadanhtuan/go-sdk v0.0.0-20240227044733-37fe6475f697
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 	gorm.io/gorm v1.25.7
@@ -73,7 +73,7 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
+	golang.org/x/crypto v0.20.0 // indirect
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect

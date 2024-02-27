@@ -18,8 +18,7 @@ type LoginLog struct {
 
 	UserAgent string `json:"userAgent,omitempty" gorm:"column:user_agent"`
 	IpAddress string `json:"ipAddress,omitempty" gorm:"column:ip_address"`
-	Browser   string `json:"browser,omitempty" gorm:"column:browser"`
-	OS        string `json:"os,omitempty" gorm:"column:os"`
+	DeviceID   string `json:"deviceId,omitempty" gorm:"column:device_id"`
 }
 
 var LoginLogDB = &orm.Instance{
