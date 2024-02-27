@@ -14,12 +14,18 @@ import (
 )
 
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*protoSdk.BaseResponse, error) {
-	user := &model.User{
-		Email: req.Email,
+
+	filter := map[string]interface{}{}
+
+	filter["email"] = req.Email
+
+	result := model.UserDB.QueryOne(filter)
+	if result.Data == nil {
+		return &protoSdk.BaseResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Username or password incorrect",
+		}, nil
 	}
-
-	result := model.UserDB.QueryOne(user)
-
 	data := result.Data.([]*model.User)[0]
 
 	isVerify := sdk.VerifyPassword(req.Password, data.Password)
@@ -31,10 +37,10 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 	}
 
 	jwtPayload := &common.JWTPayload{
-		ID:       data.ID,
-		Username: data.Username,
+		ID:    data.ID,
+		Email: data.Email,
+		DeviceID: req.DeviceId,
 	}
-
 	token, err := aws.NewJWT(jwtPayload)
 
 	if err != nil {
@@ -44,25 +50,29 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 		}, nil
 	}
 
-	encodeData, _ := json.Marshal(map[string]interface{}{
-		"token": token,
-	})
+	//TODO: save login log
+	loginLog := &model.LoginLog{
+		UserId:    data.ID,
+		UserAgent: req.UserAgent,
+		IpAddress: req.IpAddress,
+		DeviceID:  req.DeviceId,
+	}
+	model.LoginLogDB.Create(loginLog)
 
-	baseResponse := &protoSdk.BaseResponse{
+	encodeData, _ := json.Marshal(token)
+	return &protoSdk.BaseResponse{
 		Status:  result.Status,
 		Message: result.Message,
 		Data:    string(encodeData),
 		Total:   result.Total,
-	}
-
-	return baseResponse, nil
+	}, nil
 }
 
 func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegister) (*protoSdk.BaseResponse, error) {
-	user := &model.User{
-		Email: req.Email,
-	}
-	checkExist := model.UserDB.QueryOne(user)
+	filter := map[string]interface{}{}
+
+	filter["email"] = req.Email
+	checkExist := model.UserDB.QueryOne(filter)
 
 	if checkExist.Data != nil {
 		return &protoSdk.BaseResponse{
@@ -72,18 +82,21 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 	}
 
 	hashPassword, _ := sdk.HashPassword(req.Password)
-
-	user.Password = hashPassword
-	user.FirstName = req.FirstName
-	user.LastName = req.LastName
-	user.Role = &enum.UserRole.User
+	user := &model.User{
+		Email:     req.Email,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Role:      &enum.UserRole.User,
+		Password:  hashPassword,
+	}
 
 	result := model.UserDB.Create(user)
-
 	data := result.Data.([]*model.User)[0]
+
 	jwtPayload := &common.JWTPayload{
-		ID:       data.ID,
-		Username: data.Username,
+		ID:    data.ID,
+		Email: data.Email,
+		DeviceID: req.DeviceId,
 	}
 
 	token, err := aws.NewJWT(jwtPayload)
@@ -95,16 +108,20 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 		}, nil
 	}
 
-	encodeData, _ := json.Marshal(map[string]interface{}{
-		"token": token,
-	})
+	//TODO: save login log
+	loginLog := &model.LoginLog{
+		UserId:    data.ID,
+		UserAgent: req.UserAgent,
+		IpAddress: req.IpAddress,
+		DeviceID:  req.DeviceId,
+	}
+	model.LoginLogDB.Create(loginLog)
 
-	baseResponse := &protoSdk.BaseResponse{
+	encodeData, _ := json.Marshal(token)
+	return &protoSdk.BaseResponse{
 		Status:  result.Status,
 		Message: result.Message,
 		Data:    string(encodeData),
 		Total:   result.Total,
-	}
-
-	return baseResponse, nil
+	}, nil
 }
