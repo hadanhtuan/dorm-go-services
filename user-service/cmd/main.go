@@ -2,19 +2,20 @@ package main
 
 import (
 	"fmt"
-	. "github.com/hadanhtuan/go-sdk"
+	"user-service/internal"
+	"user-service/internal/model"
+	"gorm.io/gorm"
+	"github.com/hadanhtuan/go-sdk"
+	aws "github.com/hadanhtuan/go-sdk/aws"
 	config "github.com/hadanhtuan/go-sdk/config"
 	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
-	"user-service/internal"
-	database "user-service/internal/db"
-	"user-service/internal/model"
 )
 
 func main() {
 	config, _ := config.InitConfig("")
 	dbOrm := orm.Connect(config.DBOrm)
-	app := App{
+	aws.ConnectAWS()
+	app := sdk.App{
 		Config: config,
 		DBOrm:  dbOrm,
 	}
@@ -25,6 +26,6 @@ func main() {
 
 func onDBConnected(db *gorm.DB) {
 	fmt.Println("Connected to DB " + db.Name())
-	database.Migrate(db)
 	model.InitTableUser(db)
+	model.InitTableLoginLog(db)
 }
