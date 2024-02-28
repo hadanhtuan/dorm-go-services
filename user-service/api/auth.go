@@ -3,6 +3,8 @@ package apiUser
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 	"user-service/internal/model"
 	"user-service/internal/model/enum"
 	protoSdk "user-service/proto/sdk"
@@ -14,7 +16,6 @@ import (
 )
 
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*protoSdk.BaseResponse, error) {
-
 	filter := map[string]interface{}{}
 
 	filter["email"] = req.Email
@@ -37,8 +38,8 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 	}
 
 	jwtPayload := &common.JWTPayload{
-		ID:    data.ID,
-		Email: data.Email,
+		ID:       data.ID,
+		Email:    data.Email,
 		DeviceID: req.DeviceId,
 	}
 	token, err := aws.NewJWT(jwtPayload)
@@ -56,6 +57,7 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 		UserAgent: req.UserAgent,
 		IpAddress: req.IpAddress,
 		DeviceID:  req.DeviceId,
+		ExpiresAt: jwtPayload.ExpiresAt.Time,
 	}
 	model.LoginLogDB.Create(loginLog)
 
@@ -70,6 +72,7 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 
 func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegister) (*protoSdk.BaseResponse, error) {
 	filter := map[string]interface{}{}
+	fmt.Println("motherfucker")
 
 	filter["email"] = req.Email
 	checkExist := model.UserDB.QueryOne(filter)
@@ -94,8 +97,8 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 	data := result.Data.([]*model.User)[0]
 
 	jwtPayload := &common.JWTPayload{
-		ID:    data.ID,
-		Email: data.Email,
+		ID:       data.ID,
+		Email:    data.Email,
 		DeviceID: req.DeviceId,
 	}
 
@@ -114,6 +117,7 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 		UserAgent: req.UserAgent,
 		IpAddress: req.IpAddress,
 		DeviceID:  req.DeviceId,
+		ExpiresAt: jwtPayload.ExpiresAt.Time,
 	}
 	model.LoginLogDB.Create(loginLog)
 
@@ -123,5 +127,61 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 		Message: result.Message,
 		Data:    string(encodeData),
 		Total:   result.Total,
+	}, nil
+}
+
+func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+	jwtPayload, _ := aws.VerifyJWT(req.Token)
+	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
+
+	if time.Duration(expireTime.Hour()) > 24*time.Hour {
+		return &protoSdk.BaseResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Token outdate, please login",
+		}, nil
+	}
+
+	filter := map[string]interface{}{}
+	filter["expires_at <"] = expireTime
+	filter["email"] = req.Email
+	filter["device_id"] = req.DeviceId
+
+	result := model.LoginLogDB.QueryOne(filter)
+
+	if result.Status == common.APIStatus.NotFound {
+		return &protoSdk.BaseResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Not found season, please login",
+		}, nil
+	}
+
+	token, _ := aws.NewJWT(jwtPayload)
+	loginLog := result.Data.([]*model.LoginLog)[0]
+	loginLog.ExpiresAt = token.ExpiresAt
+
+	model.LoginLogDB.Update(filter, loginLog)
+
+	encodeData, _ := json.Marshal(token)
+	return &protoSdk.BaseResponse{
+		Status:  common.APIStatus.Ok,
+		Message: "Refresh token successfully",
+		Data:    string(encodeData),
+	}, nil
+}
+
+func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+	filter := map[string]interface{}{}
+	filter["email"] = req.Email
+	filter["device_id"] = req.DeviceId
+
+	loginLog := &model.LoginLog{
+		ExpiresAt: time.Now(),
+	}
+
+	model.LoginLogDB.Update(filter, loginLog)
+
+	return &protoSdk.BaseResponse{
+		Status:  common.APIStatus.Ok,
+		Message: "Logout successfully",
 	}, nil
 }
