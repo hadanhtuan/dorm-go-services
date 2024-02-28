@@ -2,9 +2,10 @@ package model
 
 import (
 	"time"
-	"gorm.io/gorm"
+
 	"github.com/google/uuid"
 	orm "github.com/hadanhtuan/go-sdk/db/orm"
+	"gorm.io/gorm"
 )
 
 type LoginLog struct {
@@ -16,9 +17,10 @@ type LoginLog struct {
 	//foreign key
 	UserId uuid.UUID `json:"userId" gorm:"column:user_id"`
 
-	UserAgent string `json:"userAgent,omitempty" gorm:"column:user_agent"`
-	IpAddress string `json:"ipAddress,omitempty" gorm:"column:ip_address"`
-	DeviceID   string `json:"deviceId,omitempty" gorm:"column:device_id"`
+	ExpiresAt time.Time `json:"expiresAt,omitempty" gorm:"column:expires_at"`
+	UserAgent string     `json:"userAgent,omitempty" gorm:"column:user_agent"`
+	IpAddress string     `json:"ipAddress,omitempty" gorm:"column:ip_address"`
+	DeviceID  string     `json:"deviceId,omitempty" gorm:"column:device_id"`
 }
 
 var LoginLogDB = &orm.Instance{
