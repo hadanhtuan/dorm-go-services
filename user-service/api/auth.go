@@ -2,14 +2,14 @@ package apiUser
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"time"
 	"user-service/internal/model"
 	"user-service/internal/model/enum"
+	"user-service/internal/util"
 	protoSdk "user-service/proto/sdk"
 	protoUser "user-service/proto/user"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/aws"
 	"github.com/hadanhtuan/go-sdk/common"
@@ -31,57 +31,44 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 
 	isVerify := sdk.VerifyPassword(req.Password, data.Password)
 	if !isVerify || result.Data == nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
 			Message: "Username or password incorrect",
-		}, nil
+		})
 	}
-
-	jwtPayload := &common.JWTPayload{
-		ID:       data.ID,
-		Email:    data.Email,
-		DeviceID: req.DeviceId,
-	}
-	token, err := aws.NewJWT(jwtPayload)
+	token, err := CreateNewSeason(data.ID, req.UserAgent, req.IpAddress, req.DeviceId)
 
 	if err != nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Ok,
+			Message: "Error generate JWT. Error Detail: " + err.Error(),
+		})
+	}
+
+	if err != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.BadRequest,
 			Message: "Error generate JWT. Error Detail: " + err.Error(),
-		}, nil
+		})
 	}
 
-	//TODO: save login log
-	loginLog := &model.LoginLog{
-		UserId:    data.ID,
-		UserAgent: req.UserAgent,
-		IpAddress: req.IpAddress,
-		DeviceID:  req.DeviceId,
-		ExpiresAt: jwtPayload.ExpiresAt.Time,
-	}
-	model.LoginLogDB.Create(loginLog)
-
-	encodeData, _ := json.Marshal(token)
-	return &protoSdk.BaseResponse{
-		Status:  result.Status,
-		Message: result.Message,
-		Data:    string(encodeData),
-		Total:   result.Total,
-	}, nil
+	return util.ConvertToGRPC(&common.APIResponse{
+		Status: common.APIStatus.Ok,
+		Data:   token,
+	})
 }
 
 func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegister) (*protoSdk.BaseResponse, error) {
 	filter := map[string]interface{}{}
-	fmt.Println("motherfucker")
 
 	filter["email"] = req.Email
 	checkExist := model.UserDB.QueryOne(filter)
 
 	if checkExist.Data != nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.BadRequest,
 			Message: "Email already exist",
-		}, nil
+		})
 	}
 
 	hashPassword, _ := sdk.HashPassword(req.Password)
@@ -96,92 +83,168 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 	result := model.UserDB.Create(user)
 	data := result.Data.([]*model.User)[0]
 
-	jwtPayload := &common.JWTPayload{
-		ID:       data.ID,
-		Email:    data.Email,
-		DeviceID: req.DeviceId,
-	}
-
-	token, err := aws.NewJWT(jwtPayload)
+	token, err := CreateNewSeason(data.ID, req.UserAgent, req.IpAddress, req.DeviceId)
 
 	if err != nil {
-		return &protoSdk.BaseResponse{
-			Status:  common.APIStatus.BadRequest,
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Ok,
 			Message: "Error generate JWT. Error Detail: " + err.Error(),
-		}, nil
+		})
 	}
 
-	//TODO: save login log
-	loginLog := &model.LoginLog{
-		UserId:    data.ID,
-		UserAgent: req.UserAgent,
-		IpAddress: req.IpAddress,
-		DeviceID:  req.DeviceId,
-		ExpiresAt: jwtPayload.ExpiresAt.Time,
-	}
-	model.LoginLogDB.Create(loginLog)
-
-	encodeData, _ := json.Marshal(token)
-	return &protoSdk.BaseResponse{
-		Status:  result.Status,
-		Message: result.Message,
-		Data:    string(encodeData),
-		Total:   result.Total,
-	}, nil
+	return util.ConvertToGRPC(&common.APIResponse{
+		Status: common.APIStatus.Ok,
+		Data:   token,
+	})
 }
 
 func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
-	jwtPayload, _ := aws.VerifyJWT(req.Token)
-	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
+	jwtPayload, err := aws.VerifyJWT(req.Token)
 
-	if time.Duration(expireTime.Hour()) > 24*time.Hour {
-		return &protoSdk.BaseResponse{
+	if err != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
-			Message: "Token outdate, please login",
-		}, nil
+			Message: "Error verify jwt. Error detail: " + err.Error(),
+		})
+	}
+	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
+	deadlineOutdate := time.Now().Add(24 * time.Hour)
+
+	//TODO: Can only refresh token if token expires within 1 day
+	if expireTime.Before(time.Now()) && expireTime.After(deadlineOutdate) {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Invalid refresh, please login again",
+		})
 	}
 
 	filter := map[string]interface{}{}
-	filter["expires_at <"] = expireTime
-	filter["email"] = req.Email
-	filter["device_id"] = req.DeviceId
+	filter["user_id"] = jwtPayload.UserID
+	filter["id"] = jwtPayload.LoginLogID
+	filter["device_id"] = jwtPayload.DeviceID
+	// filter["expires_at"] = expireTime
+	filter["is_logout"] = false
 
 	result := model.LoginLogDB.QueryOne(filter)
 
 	if result.Status == common.APIStatus.NotFound {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
-			Message: "Not found season, please login",
-		}, nil
+			Message: "Not found season, please login again",
+		})
 	}
 
-	token, _ := aws.NewJWT(jwtPayload)
 	loginLog := result.Data.([]*model.LoginLog)[0]
-	loginLog.ExpiresAt = token.ExpiresAt
 
-	model.LoginLogDB.Update(filter, loginLog)
+	if loginLog.ExpiresAt.Before(deadlineOutdate) || loginLog.ExpiresAt.Before(expireTime) {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Season outdate, please login again",
+		})
+	}
 
-	encodeData, _ := json.Marshal(token)
-	return &protoSdk.BaseResponse{
+	loginLog.IsLogout = true
+	model.LoginLogDB.Update(filter, loginLog) //TODO: delete old season
+
+	token, err := CreateNewSeason(jwtPayload.UserID, loginLog.UserAgent, loginLog.IpAddress, jwtPayload.DeviceID)
+
+	if err != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Ok,
+			Message: "Error generate JWT. Error Detail: " + err.Error(),
+		})
+	}
+
+	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
 		Message: "Refresh token successfully",
-		Data:    string(encodeData),
-	}, nil
+		Data:    token,
+	})
 }
 
-func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgID) (*protoSdk.BaseResponse, error) {
+
 	filter := map[string]interface{}{}
-	filter["email"] = req.Email
-	filter["device_id"] = req.DeviceId
+	filter["id"] = req.Id
+	filter["is_logout"] = false
 
 	loginLog := &model.LoginLog{
 		ExpiresAt: time.Now(),
+		IsLogout:  true,
 	}
 
 	model.LoginLogDB.Update(filter, loginLog)
 
-	return &protoSdk.BaseResponse{
+	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
 		Message: "Logout successfully",
-	}, nil
+	})
+}
+
+func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+	jwtPayload, _ := aws.VerifyJWT(req.Token)
+	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
+
+	if expireTime.Before(time.Now()) {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Token timeout, please login again",
+		})
+	}
+
+	filter := map[string]interface{}{}
+	filter["user_id"] = jwtPayload.UserID
+	filter["id"] = jwtPayload.LoginLogID
+	filter["device_id"] = jwtPayload.DeviceID
+	filter["is_logout"] = false
+
+	result := model.LoginLogDB.QueryOne(filter)
+
+	if result.Status == common.APIStatus.NotFound {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Not found season, please login again",
+		})
+	}
+
+	return util.ConvertToGRPC(&common.APIResponse{
+		Status: common.APIStatus.Ok,
+		Data:   jwtPayload,
+	})
+}
+
+func (pc *UserController) GetProfile(ctx context.Context, req *protoUser.MsgID) (*protoSdk.BaseResponse, error) {
+	filter := map[string]interface{}{}
+	filter["id"] = req.Id
+
+	result := model.UserDB.QueryOne(filter)
+	return util.ConvertToGRPC(result)
+}
+
+func CreateNewSeason(userID, userAgent, ipAddress, deviceID string) (*common.JWTToken, error) {
+	expiresAt := time.Now().Add(3 * 24 * time.Hour) //TODO: token expire after 3 day
+
+	result := model.LoginLogDB.Create(&model.LoginLog{ //TODO: create new season
+		UserId:    userID,
+		UserAgent: userAgent,
+		IpAddress: ipAddress,
+		DeviceID:  deviceID,
+		ExpiresAt: expiresAt,
+		IsLogout:  false,
+	})
+	loginLog := result.Data.([]*model.LoginLog)[0]
+
+
+	//TODO: each JWT have a unique login log ID
+	jwtPayload := &common.JWTPayload{
+		UserID:     userID,
+		LoginLogID: loginLog.ID,
+		DeviceID:   deviceID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
+		},
+	}
+	token, err := aws.NewJWT(jwtPayload)
+
+	return token, err
 }
