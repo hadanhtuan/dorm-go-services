@@ -5,7 +5,6 @@ go 1.21.5
 require (
 	github.com/google/uuid v1.6.0
 	github.com/hadanhtuan/go-sdk v0.0.0-20240227044733-37fe6475f697
-	google.golang.org/genproto v0.0.0-20240213162025-012b6fc9bca9
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 	gorm.io/gorm v1.25.7

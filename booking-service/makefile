@@ -31,4 +31,5 @@ gen-booking:
 	@protoc --go_out=. --go_opt=paths=source_relative \
 				--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 				proto/booking/*.proto
-gen-all: gen-sdk gen-user
+
+gen-all: gen-sdk gen-user gen-booking
