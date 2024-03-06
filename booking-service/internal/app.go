@@ -24,7 +24,6 @@ func InitGRPCServer(app *pkg.App) error {
 
 	s := grpc.NewServer()
 	bookingProto.RegisterBookingServiceServer(s, &api.BookingController{})
-
 	log.Printf("gRPC Server started on %s", bookingServiceHost)
 
 	err = s.Serve(lis)
