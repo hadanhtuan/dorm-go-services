@@ -3,7 +3,6 @@ module booking-service
 go 1.21.5
 
 require (
-	github.com/google/uuid v1.6.0
 	github.com/hadanhtuan/go-sdk v0.0.0-20240227044733-37fe6475f697
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
@@ -39,6 +38,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect

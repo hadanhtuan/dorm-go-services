@@ -84,35 +84,21 @@ func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBo
 
 	result := model.PropertyDB.QueryOne(property)
 	if result.Data == nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.NotFound,
-			Message: "Property Not Found",
-		}, nil
+			Message: "GProperty Not Found",
+		})
 	}
-	data := result.Data.([]*model.Property)[0]
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
 		Message: "Get property successfully",
-		Data:    data,
+		Data:    result,
 	})
 
 }
 
-func (bc *BookingController) GetAllPropertyDetail(ctx context.Context, req *protoBooking.MsgGetAllPropertyRequest) (*protoSdk.BaseResponse, error) {
-	// propertyId := req.PropertyId
-	// property := &model.Property{
-	// 	ID: propertyId,
-	// }
-	page := int(req.Page)
-	limit := int(req.Limit)
-
-	result := model.PropertyDB.Query(nil, page, limit)
-	if result.Data == nil {
-		return &protoSdk.BaseResponse{
-			Status:  common.APIStatus.NotFound,
-			Message: "Property Not Found",
-		}, nil
-	}
+func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooking.MessageQueryRoom) (*protoSdk.BaseResponse, error) {
+	result := model.PropertyDB.Query(nil, int(req.Paginate.Offset), int(req.Paginate.Limit))
 	data := result.Data.([]*model.Property)
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
@@ -165,7 +151,6 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 		// PropertyType: string(req.propertyType),
 	}
 
-	fmt.Print("Update property", property)
 	result := model.PropertyDB.Update(property, propertyUpdated)
 	return &protoSdk.BaseResponse{
 		Status:  result.Status,
