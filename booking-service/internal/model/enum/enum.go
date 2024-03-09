@@ -28,7 +28,7 @@ var PropertyType = &PropertyTypeEnt{
 	Hotel: "HOTEL",
 }
 
-func GetBookingStatusValue(value int) BookingStatusValue {
+func GetBookingStatusValue(value int64) BookingStatusValue {
 	switch value {
 	case 1:
 		return BookingStatus.Pending
@@ -37,11 +37,11 @@ func GetBookingStatusValue(value int) BookingStatusValue {
 	case 3:
 		return BookingStatus.Rejected
 	default:
-		return ""
+		return BookingStatus.Pending
 	}
 }
 
-func GetPropertyTypeValue(value int) PropertyTypeValue {
+func GetPropertyTypeValue(value int64) PropertyTypeValue {
 	switch value {
 	case 1:
 		return PropertyType.Room
@@ -50,6 +50,6 @@ func GetPropertyTypeValue(value int) PropertyTypeValue {
 	case 3:
 		return PropertyType.Hotel
 	default:
-		return ""
+		return PropertyType.Room
 	}
 }

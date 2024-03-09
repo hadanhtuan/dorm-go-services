@@ -2,6 +2,7 @@ package apiBooking
 
 import (
 	"booking-service/internal/model"
+	"booking-service/internal/model/enum"
 	"booking-service/internal/util"
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
@@ -109,6 +110,7 @@ func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooki
 }
 
 func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooking.MsgCreatePropertyRequest) (*protoSdk.BaseResponse, error) {
+	propertyType := enum.GetPropertyTypeValue((req.PropertyType))
 	property := &model.Property{
 		HostId:       req.HostId,
 		WardId:       req.WardId,
@@ -118,7 +120,7 @@ func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooki
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,
-		// PropertyType: string(req.propertyType),
+		PropertyType: &propertyType,
 	}
 
 	result := model.PropertyDB.Create(property)
@@ -140,6 +142,7 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 	property := &model.Property{
 		ID: propertyId,
 	}
+	propertyType := enum.GetPropertyTypeValue((req.PropertyType))
 
 	propertyUpdated := &model.Property{
 		NumBeds:      int(req.NumBed),
@@ -148,7 +151,7 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,
-		// PropertyType: string(req.propertyType),
+		PropertyType: &propertyType,
 	}
 
 	result := model.PropertyDB.Update(property, propertyUpdated)
