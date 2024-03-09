@@ -69,11 +69,10 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 	// // model.LoginLogDB.Create(loginLog)
 
 	// encodeData, _ := json.Marshal(data)
-	return &protoSdk.BaseResponse{
+	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
 		Message: "Get Booking Detail Successfully.",
-		// Data:    string(encodeData),
-	}, nil
+	})
 }
 
 func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetPropertyRequest) (*protoSdk.BaseResponse, error) {
@@ -90,22 +89,15 @@ func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBo
 			Message: "GProperty Not Found",
 		})
 	}
-	return util.ConvertToGRPC(&common.APIResponse{
-		Status:  common.APIStatus.Ok,
-		Message: "Get property successfully",
-		Data:    result,
-	})
+	return util.ConvertToGRPC(result)
 
 }
 
 func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooking.MessageQueryRoom) (*protoSdk.BaseResponse, error) {
 	result := model.PropertyDB.Query(nil, int(req.Paginate.Offset), int(req.Paginate.Limit))
-	data := result.Data.([]*model.Property)
-	return util.ConvertToGRPC(&common.APIResponse{
-		Status:  common.APIStatus.Ok,
-		Message: "Get all properties successfully",
-		Data:    data,
-	})
+
+	result.Message = "Get all properties successfully"
+	return util.ConvertToGRPC(result)
 
 }
 
@@ -126,16 +118,16 @@ func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooki
 	result := model.PropertyDB.Create(property)
 	data := result.Data.([]*model.Property)[0]
 	if data != nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Ok,
 			Message: "Create Property Successfully.",
-		}, nil
+		})
 
 	}
-	return &protoSdk.BaseResponse{
+	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.ServerError,
 		Message: "Create Property Failed.",
-	}, nil
+	})
 }
 func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooking.MsgUpdatePropertyRequest) (*protoSdk.BaseResponse, error) {
 	propertyId := req.PropertyId
@@ -155,10 +147,7 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 	}
 
 	result := model.PropertyDB.Update(property, propertyUpdated)
-	return &protoSdk.BaseResponse{
-		Status:  result.Status,
-		Message: result.Message,
-	}, nil
+	return util.ConvertToGRPC(result)
 
 }
 
@@ -169,9 +158,5 @@ func (bc *BookingController) DeleteProperty(ctx context.Context, req *protoBooki
 	}
 
 	result := model.PropertyDB.Delete(property)
-	return &protoSdk.BaseResponse{
-		Status:  result.Status,
-		Message: result.Message,
-	}, nil
-
+	return util.ConvertToGRPC(result)
 }
