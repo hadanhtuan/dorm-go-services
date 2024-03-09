@@ -32,7 +32,7 @@ message MsgCreatePropertyRequest {
   bool isGuestFavor = 7;
   string body = 8;
   string title = 9;
-  // string propertyType = 6;
+  int64 propertyType = 10;
 
 }
 message MsgUpdatePropertyRequest {
@@ -45,7 +45,7 @@ message MsgUpdatePropertyRequest {
   string body = 8;
   string title = 9;
 
-  // string propertyType = 6;
+  int64 propertyType = 11;
   
 
 }
