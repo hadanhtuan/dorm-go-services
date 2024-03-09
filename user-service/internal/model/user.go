@@ -4,13 +4,12 @@ import (
 	"time"
 	"user-service/internal/model/enum"
 
-	"github.com/google/uuid"
 	orm "github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uuid.UUID  `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
+	ID        string     `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
 	CreatedAt time.Time  `json:"createdAt,omitempty"`
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
