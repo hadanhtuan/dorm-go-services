@@ -25,7 +25,7 @@ type Property struct {
 	PropertyType *enum.PropertyTypeValue `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Body         string                  `json:"body,omitempty" gorm:"column:body"`
 	Title        string                  `json:"title,omitempty" gorm:"column:title"`
-	// ImageUrl     []*string               `json:"imageUrl,omitempty" gorm:"column:image_url"`
+	ImageUrl     string                  `json:"imageUrl,omitempty" gorm:"column:image_url"`
 }
 
 var PropertyDB = &orm.Instance{
