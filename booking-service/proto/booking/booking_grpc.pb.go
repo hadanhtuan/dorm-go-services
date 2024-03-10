@@ -30,6 +30,11 @@ type BookingServiceClient interface {
 	CreateProperty(ctx context.Context, in *MsgCreatePropertyRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	UpdateProperty(ctx context.Context, in *MsgUpdatePropertyRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	DeleteProperty(ctx context.Context, in *MsgDeletePropertyRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	// Review
+	CreateReview(ctx context.Context, in *MsgCreateReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	UpdateReview(ctx context.Context, in *MsgUpdateReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	DeleteReview(ctx context.Context, in *MsgDeleteReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	GetReview(ctx context.Context, in *MessageQueryReview, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -94,6 +99,42 @@ func (c *bookingServiceClient) DeleteProperty(ctx context.Context, in *MsgDelete
 	return out, nil
 }
 
+func (c *bookingServiceClient) CreateReview(ctx context.Context, in *MsgCreateReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/bookingService.bookingService/CreateReview", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) UpdateReview(ctx context.Context, in *MsgUpdateReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/bookingService.bookingService/UpdateReview", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) DeleteReview(ctx context.Context, in *MsgDeleteReviewRequest, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/bookingService.bookingService/DeleteReview", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) GetReview(ctx context.Context, in *MessageQueryReview, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/bookingService.bookingService/GetReview", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility
@@ -105,6 +146,11 @@ type BookingServiceServer interface {
 	CreateProperty(context.Context, *MsgCreatePropertyRequest) (*sdk.BaseResponse, error)
 	UpdateProperty(context.Context, *MsgUpdatePropertyRequest) (*sdk.BaseResponse, error)
 	DeleteProperty(context.Context, *MsgDeletePropertyRequest) (*sdk.BaseResponse, error)
+	// Review
+	CreateReview(context.Context, *MsgCreateReviewRequest) (*sdk.BaseResponse, error)
+	UpdateReview(context.Context, *MsgUpdateReviewRequest) (*sdk.BaseResponse, error)
+	DeleteReview(context.Context, *MsgDeleteReviewRequest) (*sdk.BaseResponse, error)
+	GetReview(context.Context, *MessageQueryReview) (*sdk.BaseResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -129,6 +175,18 @@ func (UnimplementedBookingServiceServer) UpdateProperty(context.Context, *MsgUpd
 }
 func (UnimplementedBookingServiceServer) DeleteProperty(context.Context, *MsgDeletePropertyRequest) (*sdk.BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProperty not implemented")
+}
+func (UnimplementedBookingServiceServer) CreateReview(context.Context, *MsgCreateReviewRequest) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateReview not implemented")
+}
+func (UnimplementedBookingServiceServer) UpdateReview(context.Context, *MsgUpdateReviewRequest) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateReview not implemented")
+}
+func (UnimplementedBookingServiceServer) DeleteReview(context.Context, *MsgDeleteReviewRequest) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteReview not implemented")
+}
+func (UnimplementedBookingServiceServer) GetReview(context.Context, *MessageQueryReview) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReview not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 
@@ -251,6 +309,78 @@ func _BookingService_DeleteProperty_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_CreateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).CreateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingService.bookingService/CreateReview",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).CreateReview(ctx, req.(*MsgCreateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_UpdateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).UpdateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingService.bookingService/UpdateReview",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).UpdateReview(ctx, req.(*MsgUpdateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_DeleteReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).DeleteReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingService.bookingService/DeleteReview",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).DeleteReview(ctx, req.(*MsgDeleteReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_GetReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageQueryReview)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).GetReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingService.bookingService/GetReview",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).GetReview(ctx, req.(*MessageQueryReview))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -281,6 +411,22 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProperty",
 			Handler:    _BookingService_DeleteProperty_Handler,
+		},
+		{
+			MethodName: "CreateReview",
+			Handler:    _BookingService_CreateReview_Handler,
+		},
+		{
+			MethodName: "UpdateReview",
+			Handler:    _BookingService_UpdateReview_Handler,
+		},
+		{
+			MethodName: "DeleteReview",
+			Handler:    _BookingService_DeleteReview_Handler,
+		},
+		{
+			MethodName: "GetReview",
+			Handler:    _BookingService_GetReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

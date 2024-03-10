@@ -29,4 +29,5 @@ func onDBConnected(db *gorm.DB) {
 	fmt.Println("Connected to DB " + db.Name())
 	model.InitTableBooking(db)
 	model.InitTableProperty(db)
+	model.InitTableReview(db)
 }

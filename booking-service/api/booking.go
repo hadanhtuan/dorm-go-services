@@ -12,6 +12,7 @@ import (
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
+// Booking
 func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBooking.MsgGetBookingRequest) (*protoSdk.BaseResponse, error) {
 
 	// filter := map[string]interface{}{}
@@ -74,6 +75,8 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 		Message: "Get Booking Detail Successfully.",
 	})
 }
+
+//Property
 
 func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetPropertyRequest) (*protoSdk.BaseResponse, error) {
 	fmt.Println("aaa")
@@ -159,4 +162,64 @@ func (bc *BookingController) DeleteProperty(ctx context.Context, req *protoBooki
 
 	result := model.PropertyDB.Delete(property)
 	return util.ConvertToGRPC(result)
+}
+
+// Review
+func (bc *BookingController) CreateReview(ctx context.Context, req *protoBooking.MsgCreateReviewRequest) (*protoSdk.BaseResponse, error) {
+	review := &model.Review{
+		UserId:     req.UserId,
+		PropertyId: req.PropertyId,
+		ParentId:   req.ParentId,
+		Rating:     float64(req.Rating),
+		Comment:    req.Comment,
+		ImageUrl:   req.ImageUrl,
+	}
+
+	result := model.ReviewDB.Create(review)
+	data := result.Data.([]*model.Review)[0]
+	if data != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Ok,
+			Message: "Create Review Successfully.",
+		})
+
+	}
+	return util.ConvertToGRPC(&common.APIResponse{
+		Status:  common.APIStatus.ServerError,
+		Message: "Create Review Failed.",
+	})
+}
+
+func (bc *BookingController) UpdateReview(ctx context.Context, req *protoBooking.MsgUpdateReviewRequest) (*protoSdk.BaseResponse, error) {
+	reviewId := req.ReviewId
+	review := &model.Review{
+		ID: reviewId,
+	}
+
+	reviewUpdated := &model.Review{
+		Rating:   float64(req.Rating),
+		Comment:  req.Comment,
+		ImageUrl: req.ImageUrl,
+	}
+
+	result := model.ReviewDB.Update(review, reviewUpdated)
+	return util.ConvertToGRPC(result)
+
+}
+
+func (bc *BookingController) DeleteReview(ctx context.Context, req *protoBooking.MsgDeleteReviewRequest) (*protoSdk.BaseResponse, error) {
+	reviewId := req.ReviewId
+	review := &model.Review{
+		ID: reviewId,
+	}
+
+	result := model.ReviewDB.Delete(review)
+	return util.ConvertToGRPC(result)
+}
+
+func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.MessageQueryReview) (*protoSdk.BaseResponse, error) {
+	result := model.ReviewDB.Query(req.QueryFields.Id, 1, 1)
+	result.Message = "Get all reviews successfully"
+	return util.ConvertToGRPC(result)
+
 }
