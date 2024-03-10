@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package searchService;
+
+import "proto/sdk/sdk.proto";
+
+option go_package = "search-service/proto/search";
+
+service searchService {
+  rpc search(MsgSearch) returns (sdk.BaseResponse);
+}
+
+message MsgSearch {
+  string test = 1;
+}
