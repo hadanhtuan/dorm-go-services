@@ -7,13 +7,12 @@ import (
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
 	"context"
-	"fmt"
 
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
 // Booking
-func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBooking.MsgGetBookingRequest) (*protoSdk.BaseResponse, error) {
+func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBooking.MsgGetBooking) (*protoSdk.BaseResponse, error) {
 
 	// filter := map[string]interface{}{}
 
@@ -55,7 +54,7 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 
 	// // if err != nil {
 	// // 	return &protoSdk.BaseResponse{
-	// // 		Status:  common.APIStatus.BadRequest,
+	// // 		Status:  common.APIStatus.Bad,
 	// // 		Message: "Error generate JWT. Error Detail: " + err.Error(),
 	// // 	}, nil
 	// // }
@@ -78,40 +77,38 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 
 //Property
 
-func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetPropertyRequest) (*protoSdk.BaseResponse, error) {
-	fmt.Println("aaa")
-	propertyId := req.PropertyId
+func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetProperty) (*protoSdk.BaseResponse, error) {
 	property := &model.Property{
-		ID: propertyId,
+		ID: req.PropertyId,
 	}
 
 	result := model.PropertyDB.QueryOne(property)
-	if result.Data == nil {
+	if result.Status == common.APIStatus.NotFound {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.NotFound,
-			Message: "GProperty Not Found",
+			Message: "Property Not Found",
 		})
 	}
 	return util.ConvertToGRPC(result)
 
 }
 
-func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooking.MessageQueryRoom) (*protoSdk.BaseResponse, error) {
-	result := model.PropertyDB.Query(nil, int(req.Paginate.Offset), int(req.Paginate.Limit))
+func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooking.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
+	result := model.PropertyDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
 
 	result.Message = "Get all properties successfully"
 	return util.ConvertToGRPC(result)
 
 }
 
-func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooking.MsgCreatePropertyRequest) (*protoSdk.BaseResponse, error) {
-	propertyType := enum.GetPropertyTypeValue((req.PropertyType))
+func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooking.MsgCreateProperty) (*protoSdk.BaseResponse, error) {
+	propertyType := enum.PropertyTypeValue(req.PropertyType)
 	property := &model.Property{
 		HostId:       req.HostId,
 		WardId:       req.WardId,
-		NumBeds:      int(req.NumBed),
-		NumBedrooms:  int(req.NumBedroom),
-		NumBaths:     int(req.NumBath),
+		NumBeds:      req.NumBed,
+		NumBedrooms:  req.NumBedroom,
+		NumBaths:     req.NumBath,
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,
@@ -119,30 +116,29 @@ func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooki
 	}
 
 	result := model.PropertyDB.Create(property)
-	data := result.Data.([]*model.Property)[0]
-	if data != nil {
+	if result.Status != common.APIStatus.Created {
 		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.Ok,
-			Message: "Create Property Successfully.",
+			Status:  common.APIStatus.ServerError,
+			Message: "Create Property Failed.",
 		})
-
 	}
 	return util.ConvertToGRPC(&common.APIResponse{
-		Status:  common.APIStatus.ServerError,
-		Message: "Create Property Failed.",
+		Status:  common.APIStatus.Ok,
+		Message: "Create Property Successfully.",
 	})
 }
-func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooking.MsgUpdatePropertyRequest) (*protoSdk.BaseResponse, error) {
+
+func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooking.MsgUpdateProperty) (*protoSdk.BaseResponse, error) {
 	propertyId := req.PropertyId
 	property := &model.Property{
 		ID: propertyId,
 	}
-	propertyType := enum.GetPropertyTypeValue((req.PropertyType))
+	propertyType := enum.PropertyTypeValue(req.PropertyType)
 
 	propertyUpdated := &model.Property{
-		NumBeds:      int(req.NumBed),
-		NumBedrooms:  int(req.NumBedroom),
-		NumBaths:     int(req.NumBath),
+		NumBeds:      req.NumBed,
+		NumBedrooms:  req.NumBedroom,
+		NumBaths:     req.NumBath,
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,
@@ -154,7 +150,7 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 
 }
 
-func (bc *BookingController) DeleteProperty(ctx context.Context, req *protoBooking.MsgDeletePropertyRequest) (*protoSdk.BaseResponse, error) {
+func (bc *BookingController) DeleteProperty(ctx context.Context, req *protoBooking.MsgDeleteProperty) (*protoSdk.BaseResponse, error) {
 	propertyId := req.PropertyId
 	property := &model.Property{
 		ID: propertyId,
@@ -162,64 +158,4 @@ func (bc *BookingController) DeleteProperty(ctx context.Context, req *protoBooki
 
 	result := model.PropertyDB.Delete(property)
 	return util.ConvertToGRPC(result)
-}
-
-// Review
-func (bc *BookingController) CreateReview(ctx context.Context, req *protoBooking.MsgCreateReviewRequest) (*protoSdk.BaseResponse, error) {
-	review := &model.Review{
-		UserId:     req.UserId,
-		PropertyId: req.PropertyId,
-		ParentId:   req.ParentId,
-		Rating:     float64(req.Rating),
-		Comment:    req.Comment,
-		ImageUrl:   req.ImageUrl,
-	}
-
-	result := model.ReviewDB.Create(review)
-	data := result.Data.([]*model.Review)[0]
-	if data != nil {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.Ok,
-			Message: "Create Review Successfully.",
-		})
-
-	}
-	return util.ConvertToGRPC(&common.APIResponse{
-		Status:  common.APIStatus.ServerError,
-		Message: "Create Review Failed.",
-	})
-}
-
-func (bc *BookingController) UpdateReview(ctx context.Context, req *protoBooking.MsgUpdateReviewRequest) (*protoSdk.BaseResponse, error) {
-	reviewId := req.ReviewId
-	review := &model.Review{
-		ID: reviewId,
-	}
-
-	reviewUpdated := &model.Review{
-		Rating:   float64(req.Rating),
-		Comment:  req.Comment,
-		ImageUrl: req.ImageUrl,
-	}
-
-	result := model.ReviewDB.Update(review, reviewUpdated)
-	return util.ConvertToGRPC(result)
-
-}
-
-func (bc *BookingController) DeleteReview(ctx context.Context, req *protoBooking.MsgDeleteReviewRequest) (*protoSdk.BaseResponse, error) {
-	reviewId := req.ReviewId
-	review := &model.Review{
-		ID: reviewId,
-	}
-
-	result := model.ReviewDB.Delete(review)
-	return util.ConvertToGRPC(result)
-}
-
-func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.MessageQueryReview) (*protoSdk.BaseResponse, error) {
-	result := model.ReviewDB.Query(req.QueryFields.Id, 1, 1)
-	result.Message = "Get all reviews successfully"
-	return util.ConvertToGRPC(result)
-
 }

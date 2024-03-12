@@ -14,19 +14,26 @@ type Property struct {
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
-	// Role *enum.UserRoleValue `json:"role,omitempty" gorm:"column:role"`
-	WardId         string                  `json:"wardId"  gorm:"column:ward_id"`
-	HostId         string                  `json:"hostId"  gorm:"column:host_id"`
-	NumGuests      int                     `json:"numGuests,omitempty" gorm:"column:num_guests"`
-	NumBeds        int                     `json:"numBeds,omitempty" gorm:"column:num_beds"`
-	NumBedrooms    int                     `json:"numBedrooms,omitempty" gorm:"column:num_bedrooms"`
-	NumBaths       int                     `json:"numBathrooms,omitempty" gorm:"column:num_bathrooms"`
-	IsGuestFavor   bool                    `json:"isGuestFavor,omitempty" gorm:"column:is_guest_favor"`
-	PropertyType   *enum.PropertyTypeValue `json:"propertyType,omitempty" gorm:"column:property_type"`
-	Body           string                  `json:"body,omitempty" gorm:"column:body"`
-	Title          string                  `json:"title,omitempty" gorm:"column:title"`
-	ImageUrl       string                  `json:"imageUrl,omitempty" gorm:"column:image_url"`
-	OverrallRating float64                 `json:"overRallRate,omitempty" gorm:"column:over_rall_rate"`
+	ImageUrl      string  `json:"imageUrl,omitempty" gorm:"column:image_url"`
+	OverallRating float64 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
+
+	WardId string `json:"wardId" gorm:"column:ward_id"`
+	Lat    string `json:"lat" gorm:"column:lat"`
+	Long   string `json:"long" gorm:"column:long"`
+	HostId string `json:"hostId" gorm:"column:host_id"`
+
+	Amenities string `json:"amenities" gorm:"column:amenities"`
+
+	PropertyType *enum.PropertyTypeValue `json:"propertyType,omitempty" gorm:"column:property_type"`
+	NumGuests    int32                   `json:"numGuests,omitempty" gorm:"column:num_guests"`
+	NumBeds      int32                   `json:"numBeds,omitempty" gorm:"column:num_beds"`
+	NumBedrooms  int32                   `json:"numBedrooms,omitempty" gorm:"column:num_bedrooms"`
+	NumBaths     int32                   `json:"numBathrooms,omitempty" gorm:"column:num_bathrooms"`
+	Price        float64                 `json:"price,omitempty" gorm:"column:price"`
+	IsGuestFavor bool                    `json:"isGuestFavor,omitempty" gorm:"column:is_guest_favor"`
+	Body         string                  `json:"body,omitempty" gorm:"column:body"`
+	Title        string                  `json:"title,omitempty" gorm:"column:title"`
+	// ImageUrl     []*string               `json:"imageUrl,omitempty" gorm:"column:image_url"`
 }
 
 var PropertyDB = &orm.Instance{
