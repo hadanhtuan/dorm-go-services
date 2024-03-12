@@ -14,11 +14,10 @@ import (
 
 func main() {
 	config, _ := config.InitConfig("")
-	dbOrm := orm.Connect(config.DBOrm)
+	dbOrm := orm.ConnectDB()
 	aws.ConnectAWS()
 	app := sdk.App{
 		Config: config,
-		DBOrm:  dbOrm,
 	}
 
 	onDBConnected(dbOrm)
@@ -30,4 +29,6 @@ func onDBConnected(db *gorm.DB) {
 	model.InitTableBooking(db)
 	model.InitTableProperty(db)
 	model.InitTableReview(db)
+	model.InitTableAmenity(db)
+	model.InitTablePropertyAmenity(db)
 }
