@@ -4,10 +4,11 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/create"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
-//constant do not have memory address(cannot use &)
+
+// constant do not have memory address(cannot use &)
 var (
 	emptyReplacement = " "
-	analyzer         = "custom_analyzer"
+	customAnalyzer   = "custom_analyzer"
 	normalizer       = "custom_normalizer"
 
 	CacheSearchDocument = "search:document"
@@ -17,7 +18,7 @@ var (
 	SearchPost = "POST"
 	SearchUser = "USER"
 
-	PropertyIndices           = "property_index"
+	PropertyIndices       = "property_index"
 	UserIndices           = "user_index"
 	SearchTrackingIndices = "search_tracking_index"
 )
@@ -28,7 +29,7 @@ var PropertyIndicesCnf = &create.Request{
 			Analyzer: map[string]types.Analyzer{
 				"custom_analyzer": &types.CustomAnalyzer{
 					Tokenizer:  "standard",
-					CharFilter: []string{"tag_filter"},
+					CharFilter: []string{"amenity_filter"},
 					Filter:     []string{"lowercase", "classic"},
 				},
 			},
@@ -38,7 +39,7 @@ var PropertyIndicesCnf = &create.Request{
 				},
 			},
 			CharFilter: map[string]types.CharFilter{
-				"tag_filter": &types.PatternReplaceCharFilter{
+				"amenity_filter": &types.PatternReplaceCharFilter{
 					Type:        "pattern_replace",
 					Pattern:     "\\|",
 					Replacement: &emptyReplacement,
@@ -51,13 +52,39 @@ var PropertyIndicesCnf = &create.Request{
 			"id": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"cityId": types.KeywordProperty{
+			"createdAt": types.DateProperty{
+				Type: "date",
+			},
+			// "categories": types.NestedProperty{
+			// 	Type: "nested",
+			// 	Properties: map[string]types.Property{
+			// 		"id": types.KeywordProperty{
+			// 			Type: "keyword",
+			// 		},
+			// 		"name": types.KeywordProperty{
+			// 			Type:       "keyword",
+			// 			Normalizer: &normalizer,
+			// 		},
+			// 	},
+			// },
+
+			"overallRate": types.FloatNumberProperty{
+				Type: "float",
+			},
+			"wardId": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"countryId": types.KeywordProperty{
+			"lat": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"categories": types.NestedProperty{
+			"long": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"hostId": types.KeywordProperty{
+				Type: "keyword",
+			},
+
+			"amenities": types.NestedProperty{
 				Type: "nested",
 				Properties: map[string]types.Property{
 					"id": types.KeywordProperty{
@@ -69,43 +96,43 @@ var PropertyIndicesCnf = &create.Request{
 					},
 				},
 			},
-			"tags": types.NestedProperty{
-				Type: "nested",
-				Properties: map[string]types.Property{
-					"id": types.KeywordProperty{
-						Type: "keyword",
-					},
-					"name": types.KeywordProperty{
-						Type:       "keyword",
-						Normalizer: &normalizer,
-					},
-				},
+
+
+			"numGuests": types.IntegerNumberProperty{
+				Type: "integer",
+			},
+			"numBeds": types.IntegerNumberProperty{
+				Type: "integer",
+			},
+			"numBedrooms": types.IntegerNumberProperty{
+				Type: "integer",
+			},
+			"numBathrooms": types.IntegerNumberProperty{
+				Type: "integer",
+			},
+			"IsGuestFavor": types.BooleanProperty{
+				Type: "boolean",
 			},
 			"title": types.TextProperty{
 				Type:     "text",
-				Analyzer: &analyzer,
+				Analyzer: &customAnalyzer,
 			},
-			"content": types.TextProperty{
+			"body": types.TextProperty{
 				Type: "text",
 			},
-			"location": types.TextProperty{
-				Type: "text",
-			},
-			"isPublic": types.BooleanProperty{
-				Type: "boolean",
-			},
-			"viewCount": types.IntegerNumberProperty{
-				Type: "integer",
-			},
-			"readCount": types.IntegerNumberProperty{
-				Type: "integer",
-			},
+
+
+
+
+
+
+
+
+
+
 			"owner": types.TextProperty{
 				Type:     "text",
-				Analyzer: &analyzer,
-			},
-			"createdAt": types.DateProperty{
-				Type: "date",
+				Analyzer: &customAnalyzer,
 			},
 		},
 	},
