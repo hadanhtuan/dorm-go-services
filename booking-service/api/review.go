@@ -60,7 +60,13 @@ func (bc *BookingController) DeleteReview(ctx context.Context, req *protoBooking
 }
 
 func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.MessageQueryReview) (*protoSdk.BaseResponse, error) {
-	result := model.ReviewDB.Query(req.QueryFields.Id, req.Paginate.Offset, req.Paginate.Limit)
+	var result *common.APIResponse
+	if req.QueryFields == nil {
+		result = model.ReviewDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
+	} else {
+		result = model.ReviewDB.Query(req.QueryFields.Id, req.Paginate.Offset, req.Paginate.Limit)
+	}
+
 	result.Message = "Get all reviews successfully"
 	return util.ConvertToGRPC(result)
 
