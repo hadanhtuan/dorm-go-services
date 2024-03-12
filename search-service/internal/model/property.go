@@ -1,11 +1,8 @@
 package model
 
 import (
-	"booking-service/internal/model/enum"
+	"search-service/internal/model/enum"
 	"time"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
 )
 
 type Property struct {
@@ -33,14 +30,4 @@ type Property struct {
 	IsGuestFavor bool                    `json:"isGuestFavor,omitempty" gorm:"column:is_guest_favor"`
 	Body         string                  `json:"body,omitempty" gorm:"column:body"`
 	Title        string                  `json:"title,omitempty" gorm:"column:title"`
-}
-
-var PropertyDB = &orm.Instance{
-	TableName: "properties",
-	Model:     &Property{},
-}
-
-func InitTableProperty(db *gorm.DB) {
-	db.Table(PropertyDB.TableName).AutoMigrate(&Property{})
-	PropertyDB.ApplyDatabase(db)
 }

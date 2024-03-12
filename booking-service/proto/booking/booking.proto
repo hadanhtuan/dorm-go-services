@@ -38,7 +38,7 @@ message MsgCreateProperty {
   string propertyType = 10;
   string lat = 11;
   string long = 12;
-  repeated string amenitiesId = 13;
+  repeated string amenities = 13;
 }
 
 message MsgUpdateProperty {
@@ -53,7 +53,7 @@ message MsgUpdateProperty {
   string propertyType = 9;
   string lat = 11;
   string long = 12;
-  repeated string amenitiesId = 13;
+  repeated string amenities = 13;
 }
 
 message MsgDeleteProperty {

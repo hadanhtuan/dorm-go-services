@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+
 func InitGRPCServer(app *pkg.App) error {
 	bookingServiceHost := fmt.Sprintf(
 		"%s:%s",

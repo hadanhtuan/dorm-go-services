@@ -2,9 +2,6 @@ package model
 
 import (
 	"time"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
 )
 
 type Amenity struct {
@@ -14,16 +11,6 @@ type Amenity struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	Name        string `json:"name"  gorm:"column:name"`
-	Description string `json:"description"  gorm:"column:description"`
+	Description string `json:"description" gorm:"column:description"`
 	Icon        string `json:"icon"  gorm:"column:icon"`
-}
-
-var AmenityDB = &orm.Instance{
-	TableName: "amenities",
-	Model:     &Amenity{},
-}
-
-func InitTableAmenity(db *gorm.DB) {
-	db.Table(AmenityDB.TableName).AutoMigrate(&Amenity{})
-	AmenityDB.ApplyDatabase(db)
 }

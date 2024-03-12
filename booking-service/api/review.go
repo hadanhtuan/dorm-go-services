@@ -6,7 +6,6 @@ import (
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
 	"context"
-
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
@@ -14,10 +13,13 @@ func (bc *BookingController) CreateReview(ctx context.Context, req *protoBooking
 	review := &model.Review{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
-		ParentId:   req.ParentId,
-		Rating:     req.Rating,
-		Comment:    req.Comment,
-		ImageUrl:   req.ImageUrl,
+		Rating:   req.Rating,
+		Comment:  req.Comment,
+		ImageUrl: req.ImageUrl,
+	}
+
+	if req.ParentId != "" {
+		review.ParentId = &req.ParentId
 	}
 
 	result := model.ReviewDB.Create(review)
@@ -68,6 +70,6 @@ func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.Me
 	}
 
 	result.Message = "Get all reviews successfully"
-	return util.ConvertToGRPC(result)
 
+	return util.ConvertToGRPC(result)
 }

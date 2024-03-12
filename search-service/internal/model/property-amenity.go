@@ -2,9 +2,6 @@ package model
 
 import (
 	"time"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
 )
 
 type PropertyAmenity struct {
@@ -17,14 +14,4 @@ type PropertyAmenity struct {
 	AmenityID  string `gorm:"primaryKey,column:amenity_id"`
 
 	Order int32 `json:"order"  gorm:"column:order"`
-}
-
-var PropertyAmenityDB = &orm.Instance{
-	TableName: "property_amenities",
-	Model:     &PropertyAmenity{},
-}
-
-func InitTablePropertyAmenity(db *gorm.DB) {
-	db.Table(PropertyAmenityDB.TableName).AutoMigrate(&PropertyAmenity{})
-	PropertyAmenityDB.ApplyDatabase(db)
 }
