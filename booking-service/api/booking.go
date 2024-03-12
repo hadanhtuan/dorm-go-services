@@ -7,6 +7,7 @@ import (
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
 	"context"
+	"fmt"
 
 	"github.com/hadanhtuan/go-sdk/common"
 )
@@ -77,26 +78,32 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 
 //Property
 
-func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetProperty) (*protoSdk.BaseResponse, error) {
-	property := &model.Property{
-		ID: req.PropertyId,
+// func (bc *BookingController) GetPropertyDetail(ctx context.Context, req *protoBooking.MsgGetProperty) (*protoSdk.BaseResponse, error) {
+// 	property := &model.Property{
+// 		ID: req.PropertyId,
+// 	}
+
+// 	result := model.PropertyDB.QueryOne(property)
+// 	if result.Status == common.APIStatus.NotFound {
+// 		return util.ConvertToGRPC(&common.APIResponse{
+// 			Status:  common.APIStatus.NotFound,
+// 			Message: "Property Not Found",
+// 		})
+// 	}
+// 	return util.ConvertToGRPC(result)
+
+// }
+
+func (bc *BookingController) GetProperty(ctx context.Context, req *protoBooking.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
+	fmt.Print("GetProperty", req)
+	var result *common.APIResponse
+	if req.QueryFields == nil {
+		result = model.PropertyDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
+	} else {
+		result = model.PropertyDB.Query(req.QueryFields.Id, req.Paginate.Offset, req.Paginate.Limit)
 	}
 
-	result := model.PropertyDB.QueryOne(property)
-	if result.Status == common.APIStatus.NotFound {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.NotFound,
-			Message: "Property Not Found",
-		})
-	}
-	return util.ConvertToGRPC(result)
-
-}
-
-func (bc *BookingController) GetAllProperty(ctx context.Context, req *protoBooking.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
-	result := model.PropertyDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
-
-	result.Message = "Get all properties successfully"
+	result.Message = "Get all propertys successfully"
 	return util.ConvertToGRPC(result)
 
 }

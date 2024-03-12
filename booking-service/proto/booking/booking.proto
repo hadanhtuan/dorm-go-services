@@ -9,8 +9,7 @@ option go_package = "booking-service/proto/booking";
 service bookingService {
   rpc GetBookingDetail(MsgGetBooking) returns (sdk.BaseResponse);
   // Property
-  rpc GetPropertyDetail(MsgGetProperty) returns (sdk.BaseResponse);
-  rpc GetAllProperty(MsgQueryProperty) returns (sdk.BaseResponse);
+  rpc GetProperty(MsgQueryProperty) returns (sdk.BaseResponse);
   rpc CreateProperty(MsgCreateProperty) returns (sdk.BaseResponse);
   rpc UpdateProperty(MsgUpdateProperty) returns (sdk.BaseResponse);
   rpc DeleteProperty(MsgDeleteProperty) returns (sdk.BaseResponse);
@@ -75,6 +74,9 @@ message MsgQueryProperty {
 }
 
 message QueryProperty {
+  string userId = 1;
+  optional string id = 2;
+  optional string name = 3;
 }
 
 message OrderProperty {
