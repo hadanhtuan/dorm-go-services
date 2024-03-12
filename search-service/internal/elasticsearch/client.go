@@ -1,4 +1,4 @@
-package elk
+package es
 
 import (
 	"context"
