@@ -4,7 +4,6 @@ import (
 	"booking-service/internal"
 	"booking-service/internal/model"
 	"booking-service/internal/util"
-	"fmt"
 
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/amqp"
@@ -20,20 +19,18 @@ func main() {
 	aws.ConnectAWS()
 	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
 	dbOrm := orm.ConnectDB()
+	onDBConnected(dbOrm)
 
 	app := &sdk.App{
 		Config: config,
 	}
 
-	onDBConnected(dbOrm)
 	internal.InitGRPCServer(app)
 }
 
 func onDBConnected(db *gorm.DB) {
-	fmt.Println("Connected to DB " + db.Name())
 	model.InitTableAmenity(db)
-	model.InitTableBooking(db)
-	model.InitTablePropertyAmenity(db)
 	model.InitTableProperty(db)
+	model.InitTableBooking(db)
 	model.InitTableReview(db)
 }

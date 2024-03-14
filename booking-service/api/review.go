@@ -13,9 +13,9 @@ func (bc *BookingController) CreateReview(ctx context.Context, req *protoBooking
 	review := &model.Review{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
-		Rating:   req.Rating,
-		Comment:  req.Comment,
-		ImageUrl: req.ImageUrl,
+		Rating:     req.Rating,
+		Comment:    req.Comment,
+		ImageUrl:   req.ImageUrl,
 	}
 
 	if req.ParentId != "" {
@@ -62,12 +62,13 @@ func (bc *BookingController) DeleteReview(ctx context.Context, req *protoBooking
 }
 
 func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.MessageQueryReview) (*protoSdk.BaseResponse, error) {
-	var result *common.APIResponse
-	if req.QueryFields == nil {
-		result = model.ReviewDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
-	} else {
-		result = model.ReviewDB.Query(req.QueryFields.Id, req.Paginate.Offset, req.Paginate.Limit)
+	filter := map[string]interface{}{}
+
+	if req.QueryFields.Id != nil {
+		filter["id"] = req.QueryFields.Id
 	}
+
+	result := model.ReviewDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit)
 
 	result.Message = "Get all reviews successfully"
 

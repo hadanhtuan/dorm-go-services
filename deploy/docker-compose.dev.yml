@@ -10,7 +10,7 @@ services:
     volumes:
       - cache:/data
     networks:
-      - dorm
+      - gotrek
 
   postgres:
     container_name: postgres
@@ -29,10 +29,23 @@ services:
     ports:
       - ${DB_PORT}:5432
     networks:
-      - dorm
+      - gotrek
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    networks:
+      - gotrek
+    ports:
+      - ${AMQP_PORT}:5672
+      - ${AMQP_UI_PORT}:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${AMQP_USER}
+      - RABBITMQ_DEFAULT_PASS=${AMQP_PWD}
 
 networks:
-  dorm:
+  gotrek:
     driver: bridge
 
 volumes:

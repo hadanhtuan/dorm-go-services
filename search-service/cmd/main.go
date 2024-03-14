@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"search-service/internal"
-	"search-service/internal/amqp"
+	es "search-service/internal/elasticsearch"
 	"search-service/internal/model"
+	"search-service/internal/util"
 
 	"github.com/hadanhtuan/go-sdk"
-	aws "github.com/hadanhtuan/go-sdk/aws"
+	"github.com/hadanhtuan/go-sdk/amqp"
+	"github.com/hadanhtuan/go-sdk/aws"
 	config "github.com/hadanhtuan/go-sdk/config"
 	orm "github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
@@ -15,14 +17,17 @@ import (
 
 func main() {
 	config, _ := config.InitConfig("")
-	dbOrm := orm.Connect(config.DBOrm)
-	_ = amqp.ConnectRabbit(amqp.EXCHANGE, amqp.QUEUE, amqp.ExchangeType.Topic)
+	
 	aws.ConnectAWS()
+	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
+	es.ConnectElasticSearch()
+	dbOrm := orm.ConnectDB()
+	onDBConnected(dbOrm)
+
 	app := sdk.App{
 		Config: config,
 	}
 
-	onDBConnected(dbOrm)
 	internal.InitGRPCServer(&app)
 }
 

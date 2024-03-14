@@ -15,13 +15,13 @@ var BookingStatus = &BookingStatusEnt{
 
 type PropertyTypeValue string
 type PropertyTypeEnt struct {
-	Room  PropertyTypeValue
-	Home  PropertyTypeValue
-	Hotel PropertyTypeValue
+	Apartment PropertyTypeValue
+	Home      PropertyTypeValue
+	Hotel     PropertyTypeValue
 }
 
 var PropertyType = &PropertyTypeEnt{
-	Room:  "ROOM",
-	Home:  "HOME",
-	Hotel: "HOTEL",
+	Apartment: "APARTMENT",
+	Home:      "HOME",
+	Hotel:     "HOTEL",
 }

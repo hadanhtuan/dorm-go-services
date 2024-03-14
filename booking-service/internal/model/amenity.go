@@ -8,7 +8,7 @@ import (
 )
 
 type Amenity struct {
-	ID        string     `json:"id" gorm:"default:gen_random_uuid()"`
+	ID        string     `json:"id" gorm:"primarykey;default:gen_random_uuid()"`
 	CreatedAt time.Time  `json:"createdAt,omitempty"`
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
@@ -18,12 +18,17 @@ type Amenity struct {
 	Icon        string `json:"icon"  gorm:"column:icon"`
 }
 
+//TODO: overwrite table name
+func (Amenity) TableName() string {
+	return "amenity"
+}
+
 var AmenityDB = &orm.Instance{
-	TableName: "amenities",
+	TableName: "amenity",
 	Model:     &Amenity{},
 }
 
 func InitTableAmenity(db *gorm.DB) {
-	db.Table(AmenityDB.TableName).AutoMigrate(&Amenity{})
+	db.AutoMigrate(&Amenity{})
 	AmenityDB.ApplyDatabase(db)
 }

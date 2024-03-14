@@ -1,4 +1,4 @@
-package es
+package util
 
 import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/create"
@@ -11,16 +11,12 @@ var (
 	customNormalizer = "custom_normalizer"
 
 	CacheSearchDocument = "search:document"
-	CacheSearchTracking = "search:tracking"
-
-	SearchAll      = "ALL"
-	SearchProperty = "PROPERTY"
-	SearchUser     = "USER"
+	CacheSearchTracking = "search:tracking"//search and save trend word
 
 	PropertyIndex         = "property_index"
-	UserIndices           = "user_index"
 	SearchTrackingIndices = "search_tracking_index"
 )
+
 var IndicesMap = map[string]*create.Request{
 	PropertyIndex: PropertyIndexCnf,
 }
@@ -31,8 +27,7 @@ var PropertyIndexCnf = &create.Request{
 			Analyzer: map[string]types.Analyzer{
 				customAnalyzer: &types.CustomAnalyzer{
 					Tokenizer: "standard",
-					// CharFilter: []string{"amenity_filter"},
-					Filter: []string{"lowercase", "classic"},
+					Filter:    []string{"lowercase", "classic"},
 				},
 			},
 			Normalizer: map[string]types.Normalizer{
@@ -40,13 +35,6 @@ var PropertyIndexCnf = &create.Request{
 					Type: "lowercase",
 				},
 			},
-			// CharFilter: map[string]types.CharFilter{
-			// 	"amenity_filter": &types.PatternReplaceCharFilter{
-			// 		Type:        "pattern_replace",
-			// 		Pattern:     "\\|",
-			// 		Replacement: &emptyReplacement,
-			// 	},
-			// },
 		},
 	},
 	Mappings: &types.TypeMapping{
@@ -65,6 +53,26 @@ var PropertyIndexCnf = &create.Request{
 					},
 					"name": types.KeywordProperty{
 						Type:       "keyword",
+						Normalizer: &customNormalizer,
+					},
+				},
+			},
+			"bookings": types.NestedProperty{
+				Type: "nested",
+				Properties: map[string]types.Property{
+					"id": types.KeywordProperty{
+						Type: "keyword",
+					},
+					"checkInDate": types.KeywordProperty{
+						Type:       "keyword", //????
+						Normalizer: &customNormalizer,
+					},
+					"checkoutDate": types.KeywordProperty{
+						Type:       "keyword", //????
+						Normalizer: &customNormalizer,
+					},
+					"status": types.KeywordProperty{
+						Type:       "keyword", //????
 						Normalizer: &customNormalizer,
 					},
 				},
