@@ -23,7 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchServiceClient interface {
-	Search(ctx context.Context, in *MsgSearch, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	RenderSuggestion(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	SearchProperty(ctx context.Context, in *MsgSearchProperty, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 }
 
 type searchServiceClient struct {
@@ -34,9 +35,18 @@ func NewSearchServiceClient(cc grpc.ClientConnInterface) SearchServiceClient {
 	return &searchServiceClient{cc}
 }
 
-func (c *searchServiceClient) Search(ctx context.Context, in *MsgSearch, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+func (c *searchServiceClient) RenderSuggestion(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
 	out := new(sdk.BaseResponse)
-	err := c.cc.Invoke(ctx, "/searchService.searchService/search", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/renderSuggestion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *searchServiceClient) SearchProperty(ctx context.Context, in *MsgSearchProperty, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/searchProperty", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +57,8 @@ func (c *searchServiceClient) Search(ctx context.Context, in *MsgSearch, opts ..
 // All implementations must embed UnimplementedSearchServiceServer
 // for forward compatibility
 type SearchServiceServer interface {
-	Search(context.Context, *MsgSearch) (*sdk.BaseResponse, error)
+	RenderSuggestion(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error)
+	SearchProperty(context.Context, *MsgSearchProperty) (*sdk.BaseResponse, error)
 	mustEmbedUnimplementedSearchServiceServer()
 }
 
@@ -55,8 +66,11 @@ type SearchServiceServer interface {
 type UnimplementedSearchServiceServer struct {
 }
 
-func (UnimplementedSearchServiceServer) Search(context.Context, *MsgSearch) (*sdk.BaseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+func (UnimplementedSearchServiceServer) RenderSuggestion(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenderSuggestion not implemented")
+}
+func (UnimplementedSearchServiceServer) SearchProperty(context.Context, *MsgSearchProperty) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchProperty not implemented")
 }
 func (UnimplementedSearchServiceServer) mustEmbedUnimplementedSearchServiceServer() {}
 
@@ -71,20 +85,38 @@ func RegisterSearchServiceServer(s grpc.ServiceRegistrar, srv SearchServiceServe
 	s.RegisterService(&SearchService_ServiceDesc, srv)
 }
 
-func _SearchService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSearch)
+func _SearchService_RenderSuggestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSuggestion)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SearchServiceServer).Search(ctx, in)
+		return srv.(SearchServiceServer).RenderSuggestion(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/searchService.searchService/search",
+		FullMethod: "/searchService.searchService/renderSuggestion",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServiceServer).Search(ctx, req.(*MsgSearch))
+		return srv.(SearchServiceServer).RenderSuggestion(ctx, req.(*MsgSuggestion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SearchService_SearchProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSearchProperty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServiceServer).SearchProperty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/searchService.searchService/searchProperty",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServiceServer).SearchProperty(ctx, req.(*MsgSearchProperty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -97,8 +129,12 @@ var SearchService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SearchServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "search",
-			Handler:    _SearchService_Search_Handler,
+			MethodName: "renderSuggestion",
+			Handler:    _SearchService_RenderSuggestion_Handler,
+		},
+		{
+			MethodName: "searchProperty",
+			Handler:    _SearchService_SearchProperty_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

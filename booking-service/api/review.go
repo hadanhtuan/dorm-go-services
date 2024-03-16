@@ -6,18 +6,23 @@ import (
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
 	"context"
+	"fmt"
 
 	"github.com/hadanhtuan/go-sdk/common"
+	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
 func (bc *BookingController) CreateReview(ctx context.Context, req *protoBooking.MsgCreateReview) (*protoSdk.BaseResponse, error) {
 	review := &model.Review{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
-		ParentId:   req.ParentId,
 		Rating:     req.Rating,
 		Comment:    req.Comment,
 		ImageUrl:   req.ImageUrl,
+	}
+
+	if req.ParentId != "" {
+		review.ParentId = &req.ParentId
 	}
 
 	result := model.ReviewDB.Create(review)
@@ -60,14 +65,18 @@ func (bc *BookingController) DeleteReview(ctx context.Context, req *protoBooking
 }
 
 func (bc *BookingController) GetReview(ctx context.Context, req *protoBooking.MessageQueryReview) (*protoSdk.BaseResponse, error) {
-	var result *common.APIResponse
-	if req.QueryFields == nil {
-		result = model.ReviewDB.Query(nil, req.Paginate.Offset, req.Paginate.Limit)
-	} else {
-		result = model.ReviewDB.Query(req.QueryFields.Id, req.Paginate.Offset, req.Paginate.Limit)
+	filter := &model.Review{}
+
+	if req.QueryFields.PropertyId != nil {
+		filter.PropertyId = req.QueryFields.PropertyId
 	}
 
-	result.Message = "Get all reviews successfully"
-	return util.ConvertToGRPC(result)
+	result := model.ReviewDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
+		Order: []string{"created_at asc"},
+	})
 
+	data := result.Data.([]*model.Review)
+	fmt.Println(data)
+
+	return util.ConvertToGRPC(result)
 }

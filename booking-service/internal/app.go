@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+
 func InitGRPCServer(app *pkg.App) error {
 	bookingServiceHost := fmt.Sprintf(
 		"%s:%s",
@@ -24,14 +25,12 @@ func InitGRPCServer(app *pkg.App) error {
 
 	s := grpc.NewServer()
 	bookingProto.RegisterBookingServiceServer(s, &api.BookingController{})
-	log.Printf("gRPC Server started on %s", bookingServiceHost)
+	log.Printf("Booking server started on %s", bookingServiceHost)
 
 	err = s.Serve(lis)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("Server down")
 
 	return nil
 }

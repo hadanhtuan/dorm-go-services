@@ -9,3 +9,8 @@ type SearchController struct {
 	protoSearch.UnimplementedSearchServiceServer
 	App *sdk.App
 }
+
+func (pc *SearchController) InitController() {
+	pc.InitIndex()
+	pc.InitRoutingAMQP()
+}

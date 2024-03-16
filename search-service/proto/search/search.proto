@@ -7,9 +7,23 @@ import "proto/sdk/sdk.proto";
 option go_package = "search-service/proto/search";
 
 service searchService {
-  rpc search(MsgSearch) returns (sdk.BaseResponse);
+  rpc suggestLocation(MsgSuggestion) returns (sdk.BaseResponse);
+  rpc suggestText(MsgSuggestion) returns (sdk.BaseResponse);
+
+  //suggest by ip of user
+  rpc listSuggestByIP(MsgSuggestion) returns (sdk.BaseResponse);
+
+
+  //main search
+  rpc searchProperty(MsgSearchProperty) returns (sdk.BaseResponse);
 }
 
-message MsgSearch {
-  string test = 1;
+message MsgSuggestion {
+  sdk.Pagination paginate = 1;
+  optional string userId = 2;
+}
+
+message MsgSearchProperty {
+  sdk.Pagination paginate = 1;
+  optional string userId = 2;
 }

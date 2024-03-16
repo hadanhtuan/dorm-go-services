@@ -14,8 +14,10 @@ type Booking struct {
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
-	UserId        string                   `json:"userId"  gorm:"column:user_id"`
-	PropertyId    string                   `json:"propertyId"  gorm:"column:property_id"`
+	//foreign key
+	PropertyId string `json:"propertyId"  gorm:"column:property_id"`
+	UserId     string `json:"userId"  gorm:"column:user_id"`
+
 	CheckInDate   time.Time                `json:"checkInDate,omitempty" gorm:"column:checkIn_date"`
 	CheckoutDate  time.Time                `json:"checkoutDate,omitempty" gorm:"column:checkout_date"`
 	TotalPrice    float64                  `json:"totalPrice,omitempty" gorm:"column:total_price"`
@@ -31,12 +33,17 @@ type Booking struct {
 	HostLanguage  string                   `json:"hostLanguage,omitempty" gorm:"column:host_language"`
 }
 
+func (Booking) TableName() string {
+	return "booking"
+}
+
+
 var BookingDB = &orm.Instance{
 	TableName: "booking",
 	Model:     &Booking{},
 }
 
 func InitTableBooking(db *gorm.DB) {
-	db.Table(BookingDB.TableName).AutoMigrate(&Booking{})
+	db.AutoMigrate(&Booking{})
 	BookingDB.ApplyDatabase(db)
 }
