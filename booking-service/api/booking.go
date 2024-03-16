@@ -22,7 +22,6 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 
 func (bc *BookingController) GetProperty(ctx context.Context, req *protoBooking.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
 	filter := &model.Property{
-		Reviews: []*model.Review{},
 	}
 
 	if req.QueryFields.Id != nil {
