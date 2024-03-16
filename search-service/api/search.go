@@ -25,6 +25,7 @@ func (pc *SearchController) Search(ctx context.Context, req *protoSearch.MsgSear
 
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status: common.APIStatus.Ok,
+		Data: query,
 	})
 }
 

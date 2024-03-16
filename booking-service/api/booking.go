@@ -7,8 +7,8 @@ import (
 	protoBooking "booking-service/proto/booking"
 	protoSdk "booking-service/proto/sdk"
 	"context"
-
 	"github.com/hadanhtuan/go-sdk/common"
+	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
 // Booking
@@ -21,13 +21,17 @@ func (bc *BookingController) GetBookingDetail(ctx context.Context, req *protoBoo
 }
 
 func (bc *BookingController) GetProperty(ctx context.Context, req *protoBooking.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
-	filter := map[string]interface{}{}
-
-	if req.QueryFields.Id != nil {
-		filter["id"] = req.QueryFields.Id
+	filter := &model.Property{
+		Reviews: []*model.Review{},
 	}
 
-	result := model.PropertyDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit)
+	if req.QueryFields.Id != nil {
+		filter.ID = *req.QueryFields.Id
+	}
+
+	result := model.PropertyDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
+		Preload: []string{"Reviews"}, //Field name, not table name
+	})
 
 	result.Message = "Get properties successfully"
 	return util.ConvertToGRPC(result)
@@ -41,7 +45,7 @@ func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooki
 		NationCode:   req.NationCode,
 		NumBeds:      req.NumBeds,
 		NumBedrooms:  req.NumBedrooms,
-		NumBathRooms: req.NumBathRooms,
+		NumBathrooms: req.NumBathrooms,
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,
@@ -51,7 +55,7 @@ func (bc *BookingController) CreateProperty(ctx context.Context, req *protoBooki
 	result := model.PropertyDB.Create(property)
 	data := result.Data.([]*model.Property)[0]
 
-	//TODO: sync data to search service
+	// Sync data to search service
 	go bc.SyncProperty(data)
 
 	if result.Status != common.APIStatus.Created {
@@ -75,7 +79,7 @@ func (bc *BookingController) UpdateProperty(ctx context.Context, req *protoBooki
 	propertyUpdated := &model.Property{
 		NumBeds:      req.NumBeds,
 		NumBedrooms:  req.NumBedrooms,
-		NumBathRooms: req.NumBathRooms,
+		NumBathrooms: req.NumBathrooms,
 		IsGuestFavor: req.IsGuestFavor,
 		Body:         req.Body,
 		Title:        req.Title,

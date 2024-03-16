@@ -14,9 +14,9 @@ type Review struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	//foreign key
-	PropertyId string  `json:"propertyId" gorm:"column:property_id"`
-	ParentId   *string `json:"parentId"  gorm:"column:parent_id"`
-	UserId     string  `json:"userId"  gorm:"column:user_id"`
+	PropertyId *string  `json:"propertyId,omitempty" gorm:"column:property_id"`
+	ParentId   *string `json:"parentId,omitempty"  gorm:"column:parent_id"`
+	UserId     string  `json:"userId,omitempty"  gorm:"column:user_id"`
 
 	Rating   float32 `json:"overallRating"  gorm:"column:overall_rating"`
 	Comment  string  `json:"comment"  gorm:"column:comment"`

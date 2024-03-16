@@ -5,7 +5,7 @@ go 1.21.5
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.12.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/hadanhtuan/go-sdk v0.0.0-20240314065140-a19a7ffc325c
+	github.com/hadanhtuan/go-sdk v0.0.0-20240315082558-a6127ff83ccb
 	github.com/spf13/viper v1.18.2
 	github.com/streadway/amqp v1.1.0
 	google.golang.org/grpc v1.62.1
@@ -80,12 +80,12 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
+	golang.org/x/exp v0.0.0-20240314144324-c7f7c6466f7f // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240311173647-c811ad7063a7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240314234333-6e1732d8331c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.5.7 // indirect

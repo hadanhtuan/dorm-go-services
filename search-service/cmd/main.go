@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"search-service/internal"
 	es "search-service/internal/elasticsearch"
-	"search-service/internal/model"
 	"search-service/internal/util"
 
 	"github.com/hadanhtuan/go-sdk"
@@ -17,7 +16,7 @@ import (
 
 func main() {
 	config, _ := config.InitConfig("")
-	
+
 	aws.ConnectAWS()
 	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
 	es.ConnectElasticSearch()
@@ -33,6 +32,6 @@ func main() {
 
 func onDBConnected(db *gorm.DB) {
 	fmt.Println("Connected to DB " + db.Name())
-	model.InitTableUser(db)
-	model.InitTableLoginLog(db)
+	// model.InitTableUser(db)
+	// model.InitTableLoginLog(db)
 }

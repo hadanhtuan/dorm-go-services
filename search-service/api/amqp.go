@@ -29,5 +29,5 @@ func (pc *SearchController) InitRoutingAMQP() {
 func (pc *SearchController) EventPropertyCreated(payload []byte) {
 	var data model.Property
 	json.Unmarshal(payload, &data)
-	fmt.Println(data.ID)
+	fmt.Println(data.ID) 
 }

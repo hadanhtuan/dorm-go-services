@@ -2,9 +2,6 @@ package model
 
 import (
 	"time"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
 )
 
 type LoginLog struct {
@@ -21,14 +18,4 @@ type LoginLog struct {
 	UserAgent string    `json:"userAgent,omitempty" gorm:"column:user_agent"`
 	IpAddress string    `json:"ipAddress,omitempty" gorm:"column:ip_address"`
 	DeviceID  string    `json:"deviceId,omitempty" gorm:"column:device_id"`
-}
-
-var LoginLogDB = &orm.Instance{
-	TableName: "login_log",
-	Model:     &LoginLog{},
-}
-
-func InitTableLoginLog(db *gorm.DB) {
-	db.Table(LoginLogDB.TableName).AutoMigrate(&LoginLog{})
-	LoginLogDB.ApplyDatabase(db)
 }

@@ -5,7 +5,6 @@ import (
 	"booking-service/internal/util"
 	"encoding/json"
 	"fmt"
-
 	"github.com/hadanhtuan/go-sdk/amqp"
 )
 
