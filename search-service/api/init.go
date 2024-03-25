@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/hadanhtuan/go-sdk"
 	protoSearch "search-service/proto/search"
+
+	"github.com/hadanhtuan/go-sdk"
 )
 
 type SearchController struct {

@@ -13,6 +13,9 @@ type Amenity struct {
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
+	//many2many
+	Properties []*Property `json:"properties,omitempty" gorm:"many2many:property_amenity;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+
 	Name        string `json:"name"  gorm:"column:name"`
 	Description string `json:"description"  gorm:"column:description"`
 	Icon        string `json:"icon"  gorm:"column:icon"`

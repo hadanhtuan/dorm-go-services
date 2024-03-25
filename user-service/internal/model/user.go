@@ -14,6 +14,9 @@ type User struct {
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
+	//has many
+	LoginLogs []*LoginLog `json:"loginLogs,omitempty" gorm:"foreignKey:user_id"`
+
 	Role *enum.UserRoleValue `json:"role,omitempty" gorm:"column:role"`
 
 	Username  string `json:"username,omitempty" gorm:"column:username"`
