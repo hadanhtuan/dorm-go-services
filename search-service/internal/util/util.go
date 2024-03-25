@@ -26,3 +26,18 @@ func ConvertToGRPC(sdkResult *common.APIResponse) (*protoSdk.BaseResponse, error
 		Total:   sdkResult.Total,
 	}, nil
 }
+
+
+func MergeStruct(target, obj any) []byte {
+	var mergeObj map[string]any
+
+	byteTarget, _ := json.Marshal(target)
+	byteObj, _ := json.Marshal(obj)
+
+	json.Unmarshal(byteTarget, &mergeObj)
+	json.Unmarshal(byteObj, &mergeObj)
+
+	byteMerged, _ := json.Marshal(mergeObj)
+
+	return byteMerged
+}

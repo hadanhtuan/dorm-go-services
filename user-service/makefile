@@ -15,7 +15,7 @@ run:
 
 #Run service
 run-service:
-	nodemon --exec "go run" ./cmd/main.go --signal SIGTERM
+	nodemon --exec "go run" ./cmd/main.go --signal --signal SIGTERM
 
 # GRPC
 gen-sdk:

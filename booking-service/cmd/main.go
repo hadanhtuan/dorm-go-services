@@ -7,16 +7,14 @@ import (
 
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/amqp"
-	"github.com/hadanhtuan/go-sdk/aws"
-	config "github.com/hadanhtuan/go-sdk/config"
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
+	"github.com/hadanhtuan/go-sdk/config"
+	"github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
 )
 
 func main() {
 	config, _ := config.InitConfig("")
 
-	aws.ConnectAWS()
 	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
 	dbOrm := orm.ConnectDB()
 	onDBConnected(dbOrm)

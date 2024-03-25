@@ -10,9 +10,9 @@ import (
 
 func (bc *BookingController) CreateAmenity(ctx context.Context, req *protoBooking.MsgAmenity) (*protoSdk.BaseResponse, error) {
 	amenity := &model.Amenity{
-		Name:        *req.Name,
-		Description: *req.Description,
-		Icon:        *req.Icon,
+		Name:        req.Name,
+		Description: req.Description,
+		Icon:        req.Icon,
 	}
 
 	result := model.AmenityDB.Create(amenity)
@@ -22,13 +22,13 @@ func (bc *BookingController) CreateAmenity(ctx context.Context, req *protoBookin
 
 func (bc *BookingController) UpdateAmenity(ctx context.Context, req *protoBooking.MsgAmenity) (*protoSdk.BaseResponse, error) {
 	amenity := &model.Amenity{
-		ID: *req.Id,
+		ID: req.Id,
 	}
 
 	amenityUpdated := &model.Amenity{
-		Name:        *req.Name,
-		Description: *req.Description,
-		Icon:        *req.Icon,
+		Name:        req.Name,
+		Description: req.Description,
+		Icon:        req.Icon,
 	}
 
 	result := model.AmenityDB.Update(amenity, amenityUpdated)
@@ -48,8 +48,8 @@ func (bc *BookingController) DeleteAmenity(ctx context.Context, req *protoBookin
 func (bc *BookingController) GetAmenity(ctx context.Context, req *protoBooking.MessageQueryAmenity) (*protoSdk.BaseResponse, error) {
 	filter := &model.Amenity{}
 
-	if req.QueryFields.Id != nil {
-		filter.ID = *req.QueryFields.Id
+	if req.QueryFields.Id != "" {
+		filter.ID = req.QueryFields.Id
 	}
 
 	result := model.AmenityDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, nil)

@@ -11,14 +11,15 @@ var (
 	customNormalizer = "custom_normalizer"
 
 	CacheSearchDocument = "search:document"
-	CacheSearchTracking = "search:tracking"//search and save trend word
+	CacheSearchTracking = "search:tracking" //search and save trend word
 
-	PropertyIndex         = "property_index"
-	SearchTrackingIndices = "search_tracking_index"
+	PropertyIndex = "property_index"
+	CityIndex     = "city_index"
 )
 
 var IndicesMap = map[string]*create.Request{
 	PropertyIndex: PropertyIndexCnf,
+	CityIndex:     CityIndexCnf,
 }
 
 var PropertyIndexCnf = &create.Request{
@@ -83,17 +84,11 @@ var PropertyIndexCnf = &create.Request{
 			"overallRate": types.FloatNumberProperty{
 				Type: "float",
 			},
-			"wardCode": types.KeywordProperty{
-				Type: "keyword",
+			"maxGuests": types.IntegerNumberProperty{
+				Type: "integer",
 			},
-			"nationCode": types.KeywordProperty{
-				Type: "keyword",
-			},
-			"lat": types.KeywordProperty{
-				Type: "keyword",
-			},
-			"long": types.KeywordProperty{
-				Type: "keyword",
+			"maxPets": types.IntegerNumberProperty{
+				Type: "integer",
 			},
 			"numGuests": types.IntegerNumberProperty{
 				Type: "integer",
@@ -107,10 +102,16 @@ var PropertyIndexCnf = &create.Request{
 			"numBathrooms": types.IntegerNumberProperty{
 				Type: "integer",
 			},
-			"price": types.FloatNumberProperty{
-				Type: "float",
+			"isGuestFavor": types.BooleanProperty{
+				Type: "boolean",
 			},
-			"IsGuestFavor": types.BooleanProperty{
+			"isAllowPet": types.BooleanProperty{
+				Type: "boolean",
+			},
+			"isSelfCheckIn": types.BooleanProperty{
+				Type: "boolean",
+			},
+			"isInstantBook": types.BooleanProperty{
 				Type: "boolean",
 			},
 			"title": types.TextProperty{
@@ -120,6 +121,47 @@ var PropertyIndexCnf = &create.Request{
 			"body": types.TextProperty{
 				Type:     "text",
 				Analyzer: &customAnalyzer,
+			},
+			"cityCode": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"nationCode": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"lat": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"long": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"nightPrice": types.FloatNumberProperty{
+				Type: "float",
+			},
+			"serviceFee": types.FloatNumberProperty{
+				Type: "float",
+			},
+		},
+	},
+}
+
+var CityIndexCnf = &create.Request{
+	Settings: &types.IndexSettings{
+		Analysis: &types.IndexSettingsAnalysis{
+			Normalizer: map[string]types.Normalizer{
+				customNormalizer: &types.LowercaseNormalizer{
+					Type: "lowercase",
+				},
+			},
+		},
+	},
+	Mappings: &types.TypeMapping{
+		Properties: map[string]types.Property{
+			"cityCode": types.KeywordProperty{
+				Type:       "keyword",
+				Normalizer: &customNormalizer,
+			},
+			"searchCount": types.IntegerNumberProperty{
+				Type: "integer",
 			},
 		},
 	},
