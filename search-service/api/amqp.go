@@ -8,7 +8,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/update"
 	"github.com/hadanhtuan/go-sdk/amqp"
-	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
+	"github.com/hadanhtuan/go-sdk/db/elasticsearch"
 )
 
 func (pc *SearchController) bindingMap() map[string]amqp.CallbackFunc {
@@ -48,37 +48,3 @@ func (ps *SearchController) EventPropertyUpdated(payload []byte) {
 		Doc: json.RawMessage(byteMerged),
 	})
 }
-
-// func (ps *SearchController) EventPostDeleted(data []byte) {
-// 	var post PostDeleted
-// 	json.Unmarshal(data, &post)
-
-// 	_, err := elastic.GetDocument[PostDocument](elastic.Client, ps.PostIndexName, post.Id)
-
-// 	if err != nil {
-// 		return
-// 	}
-
-// 	ps.ESClient.UpdateDocument(ps.PostIndexName, post.Id, &update.Request{
-// 		Doc: json.RawMessage(data),
-// 	})
-// }
-
-// func (bg *SearchController) IncreasePostReadCount(data []byte) {
-// 	var payload PayloadIncreaseReadCount
-
-// 	json.Unmarshal(data, &payload)
-
-// 	script := fmt.Sprintf(
-// 		"ctx._source.readCount = ctx._source.readCount != null ? ctx._source.readCount += %d : 1",
-// 		payload.Count,
-// 	)
-
-// 	bg.ESClient.UpdateDocument(
-// 		bg.PostIndexName,
-// 		payload.DocumentId, &update.Request{
-// 			Script: types.InlineScript{
-// 				Source: script,
-// 			},
-// 		})
-// }

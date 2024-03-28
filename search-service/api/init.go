@@ -2,7 +2,6 @@ package api
 
 import (
 	protoSearch "search-service/proto/search"
-
 	"github.com/hadanhtuan/go-sdk"
 )
 
