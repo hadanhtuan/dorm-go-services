@@ -20,7 +20,7 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 
 	filter["email"] = req.Email
 
-	result := model.UserDB.QueryOne(filter)
+	result := model.UserDB.QueryOne(filter, nil)
 	if result.Data == nil {
 		return &protoSdk.BaseResponse{
 			Status:  common.APIStatus.Unauthorized,
@@ -45,13 +45,6 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 		})
 	}
 
-	if err != nil {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.BadRequest,
-			Message: "Error generate JWT. Error Detail: " + err.Error(),
-		})
-	}
-
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status: common.APIStatus.Ok,
 		Data:   token,
@@ -62,7 +55,7 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegist
 	filter := map[string]interface{}{}
 
 	filter["email"] = req.Email
-	checkExist := model.UserDB.QueryOne(filter)
+	checkExist := model.UserDB.QueryOne(filter, nil)
 
 	if checkExist.Data != nil {
 		return util.ConvertToGRPC(&common.APIResponse{
@@ -125,7 +118,7 @@ func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgTo
 	// filter["expires_at"] = expireTime
 	filter["is_logout"] = false
 
-	result := model.LoginLogDB.QueryOne(filter)
+	result := model.LoginLogDB.QueryOne(filter, nil)
 
 	if result.Status == common.APIStatus.NotFound {
 		return util.ConvertToGRPC(&common.APIResponse{
@@ -198,7 +191,7 @@ func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgTok
 	filter["device_id"] = jwtPayload.DeviceID
 	filter["is_logout"] = false
 
-	result := model.LoginLogDB.QueryOne(filter)
+	result := model.LoginLogDB.QueryOne(filter, nil)
 
 	if result.Status == common.APIStatus.NotFound {
 		return util.ConvertToGRPC(&common.APIResponse{
@@ -217,7 +210,7 @@ func (pc *UserController) GetProfile(ctx context.Context, req *protoUser.MsgID) 
 	filter := map[string]interface{}{}
 	filter["id"] = req.Id
 
-	result := model.UserDB.QueryOne(filter)
+	result := model.UserDB.QueryOne(filter, nil)
 	return util.ConvertToGRPC(result)
 }
 
@@ -233,7 +226,6 @@ func CreateNewSeason(userID, userAgent, ipAddress, deviceID string) (*common.JWT
 		IsLogout:  false,
 	})
 	loginLog := result.Data.([]*model.LoginLog)[0]
-
 
 	//TODO: each JWT have a unique login log ID
 	jwtPayload := &common.JWTPayload{

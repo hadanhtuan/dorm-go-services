@@ -1,33 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"search-service/internal"
-	"search-service/internal/amqp"
-	"search-service/internal/model"
-
+	"search-service/internal/util"
 	"github.com/hadanhtuan/go-sdk"
-	aws "github.com/hadanhtuan/go-sdk/aws"
-	config "github.com/hadanhtuan/go-sdk/config"
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
+	"github.com/hadanhtuan/go-sdk/amqp"
+	"github.com/hadanhtuan/go-sdk/config"
+	"github.com/hadanhtuan/go-sdk/db/elasticsearch"
 )
 
 func main() {
 	config, _ := config.InitConfig("")
-	dbOrm := orm.Connect(config.DBOrm)
-	_ = amqp.ConnectRabbit(amqp.EXCHANGE, amqp.QUEUE, amqp.ExchangeType.Topic)
-	aws.ConnectAWS()
+
+	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
+	es.ConnectElasticSearch()
+
 	app := sdk.App{
 		Config: config,
 	}
 
-	onDBConnected(dbOrm)
 	internal.InitGRPCServer(&app)
-}
-
-func onDBConnected(db *gorm.DB) {
-	fmt.Println("Connected to DB " + db.Name())
-	model.InitTableUser(db)
-	model.InitTableLoginLog(db)
 }

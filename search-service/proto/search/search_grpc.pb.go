@@ -23,7 +23,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchServiceClient interface {
-	Search(ctx context.Context, in *MsgSearch, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	SuggestLocation(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	SuggestText(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	// suggest by ip of user
+	ListPropertyByIP(ctx context.Context, in *MsgIP, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	// main search
+	SearchProperty(ctx context.Context, in *MsgSearchProperty, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 }
 
 type searchServiceClient struct {
@@ -34,9 +39,36 @@ func NewSearchServiceClient(cc grpc.ClientConnInterface) SearchServiceClient {
 	return &searchServiceClient{cc}
 }
 
-func (c *searchServiceClient) Search(ctx context.Context, in *MsgSearch, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+func (c *searchServiceClient) SuggestLocation(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
 	out := new(sdk.BaseResponse)
-	err := c.cc.Invoke(ctx, "/searchService.searchService/search", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/suggestLocation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *searchServiceClient) SuggestText(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/suggestText", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *searchServiceClient) ListPropertyByIP(ctx context.Context, in *MsgIP, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/listPropertyByIP", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *searchServiceClient) SearchProperty(ctx context.Context, in *MsgSearchProperty, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/searchService.searchService/searchProperty", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +79,12 @@ func (c *searchServiceClient) Search(ctx context.Context, in *MsgSearch, opts ..
 // All implementations must embed UnimplementedSearchServiceServer
 // for forward compatibility
 type SearchServiceServer interface {
-	Search(context.Context, *MsgSearch) (*sdk.BaseResponse, error)
+	SuggestLocation(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error)
+	SuggestText(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error)
+	// suggest by ip of user
+	ListPropertyByIP(context.Context, *MsgIP) (*sdk.BaseResponse, error)
+	// main search
+	SearchProperty(context.Context, *MsgSearchProperty) (*sdk.BaseResponse, error)
 	mustEmbedUnimplementedSearchServiceServer()
 }
 
@@ -55,8 +92,17 @@ type SearchServiceServer interface {
 type UnimplementedSearchServiceServer struct {
 }
 
-func (UnimplementedSearchServiceServer) Search(context.Context, *MsgSearch) (*sdk.BaseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+func (UnimplementedSearchServiceServer) SuggestLocation(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SuggestLocation not implemented")
+}
+func (UnimplementedSearchServiceServer) SuggestText(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SuggestText not implemented")
+}
+func (UnimplementedSearchServiceServer) ListPropertyByIP(context.Context, *MsgIP) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPropertyByIP not implemented")
+}
+func (UnimplementedSearchServiceServer) SearchProperty(context.Context, *MsgSearchProperty) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchProperty not implemented")
 }
 func (UnimplementedSearchServiceServer) mustEmbedUnimplementedSearchServiceServer() {}
 
@@ -71,20 +117,74 @@ func RegisterSearchServiceServer(s grpc.ServiceRegistrar, srv SearchServiceServe
 	s.RegisterService(&SearchService_ServiceDesc, srv)
 }
 
-func _SearchService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSearch)
+func _SearchService_SuggestLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSuggestion)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SearchServiceServer).Search(ctx, in)
+		return srv.(SearchServiceServer).SuggestLocation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/searchService.searchService/search",
+		FullMethod: "/searchService.searchService/suggestLocation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServiceServer).Search(ctx, req.(*MsgSearch))
+		return srv.(SearchServiceServer).SuggestLocation(ctx, req.(*MsgSuggestion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SearchService_SuggestText_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSuggestion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServiceServer).SuggestText(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/searchService.searchService/suggestText",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServiceServer).SuggestText(ctx, req.(*MsgSuggestion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SearchService_ListPropertyByIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIP)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServiceServer).ListPropertyByIP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/searchService.searchService/listPropertyByIP",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServiceServer).ListPropertyByIP(ctx, req.(*MsgIP))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SearchService_SearchProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSearchProperty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServiceServer).SearchProperty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/searchService.searchService/searchProperty",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServiceServer).SearchProperty(ctx, req.(*MsgSearchProperty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -97,8 +197,20 @@ var SearchService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SearchServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "search",
-			Handler:    _SearchService_Search_Handler,
+			MethodName: "suggestLocation",
+			Handler:    _SearchService_SuggestLocation_Handler,
+		},
+		{
+			MethodName: "suggestText",
+			Handler:    _SearchService_SuggestText_Handler,
+		},
+		{
+			MethodName: "listPropertyByIP",
+			Handler:    _SearchService_ListPropertyByIP_Handler,
+		},
+		{
+			MethodName: "searchProperty",
+			Handler:    _SearchService_SearchProperty_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
