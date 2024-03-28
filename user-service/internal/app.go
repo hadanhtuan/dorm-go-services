@@ -24,14 +24,12 @@ func InitGRPCServer(app *pkg.App) error {
 	s := grpc.NewServer()
 	userProto.RegisterUserServiceServer(s, &api.UserController{})
 
-	log.Printf("gRPC Server started on %s", userServiceHost)
+	log.Printf("Search Server started on %s", userServiceHost)
 
 	err = s.Serve(lis)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("Server down")
 
 	return nil
 }

@@ -1,11 +1,8 @@
 package model
 
 import (
-	"time"
 	"search-service/internal/model/enum"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
@@ -23,14 +20,4 @@ type User struct {
 	Phone     string `json:"phone,omitempty" gorm:"column:phone"`
 	Password  string `json:"password,omitempty" gorm:"column:password"`
 	IsActive  bool   `json:"isActive,omitempty" gorm:"column:is_active"`
-}
-
-var UserDB = &orm.Instance{
-	TableName: "member",
-	Model:     &User{},
-}
-
-func InitTableUser(db *gorm.DB) {
-	db.Table(UserDB.TableName).AutoMigrate(&User{})
-	UserDB.ApplyDatabase(db)
 }

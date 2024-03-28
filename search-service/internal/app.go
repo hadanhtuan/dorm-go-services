@@ -26,17 +26,14 @@ func InitGRPCServer(app *pkg.App) error {
 	newApi := &api.SearchController{App: app}
 	searchProto.RegisterSearchServiceServer(s, newApi)
 
-	log.Printf("gRPC Server started on %s", searchServiceHost)
+	log.Printf("Search server started on %s", searchServiceHost)
 
-	newApi.InitRoutingAMQP()
-	log.Printf("Init RabbitMQ successfully")
+	newApi.InitController()
 
 	err = s.Serve(lis)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("Server down")
 
 	return nil
 }
