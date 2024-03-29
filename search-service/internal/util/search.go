@@ -64,16 +64,14 @@ var PropertyIndexCnf = &create.Request{
 					"id": types.KeywordProperty{
 						Type: "keyword",
 					},
-					"checkInDate": types.KeywordProperty{
-						Type:       "keyword", //????
-						Normalizer: &customNormalizer,
+					"checkInDate": types.IntegerNumberProperty{
+						Type: "integer",
 					},
-					"checkoutDate": types.KeywordProperty{
-						Type:       "keyword", //????
-						Normalizer: &customNormalizer,
+					"checkoutDate": types.IntegerNumberProperty{
+						Type: "integer",
 					},
 					"status": types.KeywordProperty{
-						Type:       "keyword", //????
+						Type:       "keyword",
 						Normalizer: &customNormalizer,
 					},
 				},

@@ -2,15 +2,19 @@ package enum
 
 type BookingStatusValue string
 type BookingStatusEnt struct {
-	Pending   BookingStatusValue
-	Confirmed BookingStatusValue
-	Rejected  BookingStatusValue
+	Created     BookingStatusValue
+	Payment     BookingStatusValue
+	WaitToCheck BookingStatusValue
+	Success     BookingStatusValue
+	Rejected    BookingStatusValue
 }
 
 var BookingStatus = &BookingStatusEnt{
-	Pending:   "PENDING",
-	Confirmed: "CONFIRMED",
-	Rejected:  "REJECTED",
+	Created:     "CREATED",
+	Payment:     "PAYMENT",
+	WaitToCheck: "WAIT_TO_CHECK",
+	Success:     "SUCCESS",
+	Rejected:    "REJECTED",
 }
 
 type PropertyTypeValue string

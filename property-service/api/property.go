@@ -1,13 +1,14 @@
 package apiProperty
 
 import (
+	"context"
+	"fmt"
 	"property-service/internal/model"
 	"property-service/internal/model/enum"
 	"property-service/internal/util"
 	protoProperty "property-service/proto/property"
 	protoSdk "property-service/proto/sdk"
-	"context"
-	"fmt"
+
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
@@ -107,6 +108,7 @@ func (bc *PropertyController) UpdateProperty(ctx context.Context, req *protoProp
 
 		NightPrice: req.NightPrice,
 		ServiceFee: req.ServiceFee,
+		TaxPercent: req.TaxPercent,
 	}
 
 	// BUG HERE: cannot update many2many, fix this shit

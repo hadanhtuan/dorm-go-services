@@ -18,18 +18,19 @@ type Booking struct {
 	PropertyId string `json:"propertyId"  gorm:"column:property_id"`
 	UserId     string `json:"userId"  gorm:"column:user_id"`
 
-	CheckInDate  time.Time `json:"checkInDate,omitempty" gorm:"column:checkIn_date"`
-	CheckoutDate time.Time `json:"checkoutDate,omitempty" gorm:"column:checkout_date"`
+	Status *enum.BookingStatusValue `json:"status,omitempty" gorm:"column:status"`
 
-	DiscountFee float32 `json:"discountFee,omitempty" gorm:"column:discount_fee"`
-	TotalPrice  float32 `json:"totalPrice,omitempty" gorm:"column:total_price"`
-	
-	GuestNumber  int32                    `json:"guestNumber,omitempty" gorm:"column:guest_number"`
-	ChildNumber  int32                    `json:"childNumber,omitempty" gorm:"column:child_number"`
-	BabyNumber   int32                    `json:"babyNumber,omitempty" gorm:"column:baby_number"`
-	PetNumber    int32                    `json:"petNumber,omitempty" gorm:"column:pet_number"`
-	Status       *enum.BookingStatusValue `json:"status,omitempty" gorm:"column:status"`
-	HostLanguage string                   `json:"hostLanguage,omitempty" gorm:"column:host_language"`
+	CheckInDate  int64 `json:"checkInDate,omitempty" gorm:"column:checkin_date"`
+	CheckoutDate int64 `json:"checkoutDate,omitempty" gorm:"column:checkout_date"`
+	GuestNumber  int32 `json:"guestNumber,omitempty" gorm:"column:guest_number"`
+	ChildNumber  int32 `json:"childNumber,omitempty" gorm:"column:child_number"`
+	BabyNumber   int32 `json:"babyNumber,omitempty" gorm:"column:baby_number"`
+	PetNumber    int32 `json:"petNumber,omitempty" gorm:"column:pet_number"`
+	NightNumber  int32 `json:"nightNumber,omitempty" gorm:"column:nightNum"`
+
+	TotalPriceBeforeTax float64 `json:"totalPriceBeforeTax,omitempty" gorm:"column:total_price_before_tax"`
+	TotalPrice          float64 `json:"totalPrice,omitempty" gorm:"column:total_price"`
+	TaxFee              float64 `json:"taxFee,omitempty" gorm:"column:tax_fee"`
 }
 
 func (Booking) TableName() string {
