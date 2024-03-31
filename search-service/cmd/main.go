@@ -3,6 +3,7 @@ package main
 import (
 	"search-service/internal"
 	"search-service/internal/util"
+
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/amqp"
 	"github.com/hadanhtuan/go-sdk/config"
@@ -12,7 +13,7 @@ import (
 func main() {
 	config, _ := config.InitConfig("")
 
-	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
+	amqp.ConnectRabbit(util.SEARCH_EXCHANGE, util.SEARCH_QUEUE, amqp.ExchangeType.Topic)
 	es.ConnectElasticSearch()
 
 	app := sdk.App{

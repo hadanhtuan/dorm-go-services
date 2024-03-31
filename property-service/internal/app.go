@@ -1,16 +1,15 @@
 package internal
 
 import (
-	api "property-service/api"
-	propertyProto "property-service/proto/property"
 	"fmt"
 	"log"
 	"net"
+	api "property-service/api"
+	propertyProto "property-service/proto/property"
 
 	"github.com/hadanhtuan/go-sdk"
 	"google.golang.org/grpc"
 )
-
 
 func InitGRPCServer(app *sdk.App) error {
 	propertyServiceHost := fmt.Sprintf(
@@ -24,9 +23,11 @@ func InitGRPCServer(app *sdk.App) error {
 	}
 
 	s := grpc.NewServer()
-	propertyProto.RegisterPropertyServiceServer(s, &api.PropertyController{})
+	newApi := &api.PropertyController{}
+	propertyProto.RegisterPropertyServiceServer(s, newApi)
 	log.Printf("Property server started on %s", propertyServiceHost)
 
+	newApi.InitController()
 	err = s.Serve(lis)
 	if err != nil {
 		panic(err)

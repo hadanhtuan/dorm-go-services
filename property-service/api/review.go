@@ -64,7 +64,7 @@ func (bc *PropertyController) DeleteReview(ctx context.Context, req *protoProper
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.MessageQueryReview) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.MsgQueryReview) (*protoSdk.BaseResponse, error) {
 	filter := &model.Review{}
 
 	if req.QueryFields.PropertyId != nil {

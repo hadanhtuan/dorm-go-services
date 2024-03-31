@@ -15,10 +15,10 @@ import (
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
-func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*protoSdk.BaseResponse, error) {
-	filter := map[string]interface{}{}
+func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+	filter := &model.User{}
 
-	filter["email"] = req.Email
+	filter.Email = req.Email
 
 	result := model.UserDB.QueryOne(filter, nil)
 	if result.Data == nil {
@@ -51,10 +51,10 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgLogin) (*
 	})
 }
 
-func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgRegister) (*protoSdk.BaseResponse, error) {
-	filter := map[string]interface{}{}
+func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+	filter := &model.User{}
 
-	filter["email"] = req.Email
+	filter.Email = req.Email
 	checkExist := model.UserDB.QueryOne(filter, nil)
 
 	if checkExist.Data != nil {
@@ -211,6 +211,39 @@ func (pc *UserController) GetProfile(ctx context.Context, req *protoUser.MsgID) 
 	filter["id"] = req.Id
 
 	result := model.UserDB.QueryOne(filter, nil)
+	return util.ConvertToGRPC(result)
+}
+
+func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryUser) (*protoSdk.BaseResponse, error) {
+	queryField := req.QueryFields
+	filter := &model.User{}
+
+	if queryField.Id != "" {
+		filter.ID = queryField.Id
+	}
+
+	if queryField.Email != "" {
+		filter.Email = queryField.Email
+	}
+
+	if queryField.Gender != "" {
+		filter.Gender = queryField.Gender
+	}
+
+	if queryField.Role != nil {
+		role := enum.UserRoleValue(*queryField.Role)
+		filter.Role = &role
+	}
+
+	if queryField.Phone != "" {
+		filter.Phone = queryField.Phone
+	}
+
+	if queryField.IsActive != nil {
+		filter.IsActive = queryField.IsActive
+	}
+
+	result := model.UserDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, nil)
 	return util.ConvertToGRPC(result)
 }
 

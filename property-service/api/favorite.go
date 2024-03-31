@@ -28,7 +28,7 @@ func (bc *PropertyController) DeleteFavorite(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetFavorite(ctx context.Context, req *protoProperty.MessageQueryFavorite) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyController) GetFavorite(ctx context.Context, req *protoProperty.MsgQueryFavorite) (*protoSdk.BaseResponse, error) {
 	filter := &model.Favorite{}
 
 	if req.QueryFields.Id != "" {

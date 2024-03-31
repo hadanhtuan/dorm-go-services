@@ -63,6 +63,10 @@ github.com/hadanhtuan/go-sdk v0.0.0-20240325091740-825fbfb814fa h1:ZlEov394MFEU8
 github.com/hadanhtuan/go-sdk v0.0.0-20240325091740-825fbfb814fa/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
 github.com/hadanhtuan/go-sdk v0.0.0-20240328061259-81d18de2175f h1:zV6wDFedyPcuqIcI30A2sOK9vgtH4o+8u2gmTzo1KJM=
 github.com/hadanhtuan/go-sdk v0.0.0-20240328061259-81d18de2175f/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
+github.com/hadanhtuan/go-sdk v0.0.0-20240330085005-0aeb31235d4b h1:9l4raOPKMouVqWnUCdCV1C81f8qv5XAEFmfvfD+2kZI=
+github.com/hadanhtuan/go-sdk v0.0.0-20240330085005-0aeb31235d4b/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
+github.com/hadanhtuan/go-sdk v0.0.0-20240330120415-f70d187acf96 h1:j0O/qCX67oVjvRJFY3xhtzWvNU4i4DOfzce+ijTb9ws=
+github.com/hadanhtuan/go-sdk v0.0.0-20240330120415-f70d187acf96/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=

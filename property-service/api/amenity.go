@@ -45,7 +45,7 @@ func (bc *PropertyController) DeleteAmenity(ctx context.Context, req *protoPrope
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetAmenity(ctx context.Context, req *protoProperty.MessageQueryAmenity) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyController) GetAmenity(ctx context.Context, req *protoProperty.MsgQueryAmenity) (*protoSdk.BaseResponse, error) {
 	filter := &model.Amenity{}
 
 	if req.QueryFields.Id != "" {

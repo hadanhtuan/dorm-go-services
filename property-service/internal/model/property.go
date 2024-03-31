@@ -25,8 +25,10 @@ type Property struct {
 	//foreign key
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
 
-	PropertyType *enum.PropertyTypeValue `json:"propertyType,omitempty" gorm:"column:property_type"`
-	OverallRate  float32                 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
+	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
+	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
+
+	OverallRate float32 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
 
 	MaxGuests    int32 `json:"maxGuests,omitempty" gorm:"column:max_guests"`
 	MaxPets      int32 `json:"maxPets,omitempty" gorm:"column:max_Pets"`

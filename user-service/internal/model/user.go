@@ -25,7 +25,9 @@ type User struct {
 	Email     string `json:"email,omitempty" gorm:"column:email"`
 	Phone     string `json:"phone,omitempty" gorm:"column:phone"`
 	Password  string `json:"password,omitempty" gorm:"column:password"`
-	IsActive  bool   `json:"isActive,omitempty" gorm:"column:is_active"`
+	Gender    string `json:"gender,omitempty" gorm:"column:gender"`
+	DoB       int64  `json:"dob,omitempty" gorm:"column:dob"`
+	IsActive  *bool  `json:"isActive,omitempty" gorm:"column:is_active"`
 }
 
 var UserDB = &orm.Instance{
