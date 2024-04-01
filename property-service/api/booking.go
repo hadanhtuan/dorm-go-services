@@ -63,7 +63,7 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 		TotalPriceBeforeTax: totalPriceBeforeTax,
 		TotalPrice:          totalPrice,
 		TaxFee:              taxFee,
-		Status:              &enum.BookingStatus.Created,
+		Status:              &enum.BookingStatus.WaitToCheck,
 	}
 
 	result = model.BookingDB.Create(booking)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"payment-service/internal/model"
 	"payment-service/internal/util"
-
 	"github.com/hadanhtuan/go-sdk/amqp"
 )
 

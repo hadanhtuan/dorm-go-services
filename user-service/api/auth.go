@@ -91,6 +91,32 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgUser) 
 	})
 }
 
+func (pc *UserController) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+	user := &model.User{}
+
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+
+	if req.IsActive != nil {
+		user.IsActive = req.IsActive
+	}
+
+	if req.Gender != "" {
+		user.Gender = req.Gender
+	}
+	
+	if req.Password != "" {
+		hashPassword, _ := sdk.HashPassword(req.Password)
+		user.Password = hashPassword
+	}
+
+	result := model.UserDB.Update(&model.User{ID: req.Id}, user)
+
+	return util.ConvertToGRPC(result)
+
+}
+
 func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
 	jwtPayload, err := aws.VerifyJWT(req.Token)
 

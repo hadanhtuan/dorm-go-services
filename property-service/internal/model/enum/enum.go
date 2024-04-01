@@ -2,7 +2,6 @@ package enum
 
 type BookingStatusValue string
 type BookingStatusEnt struct {
-	Created     BookingStatusValue
 	Payment     BookingStatusValue
 	WaitToCheck BookingStatusValue
 	Success     BookingStatusValue
@@ -11,7 +10,6 @@ type BookingStatusEnt struct {
 }
 
 var BookingStatus = &BookingStatusEnt{
-	Created:     "CREATED",
 	WaitToCheck: "WAIT_TO_CHECK",
 	Success:     "SUCCESS",
 	Rejected:    "REJECTED",
