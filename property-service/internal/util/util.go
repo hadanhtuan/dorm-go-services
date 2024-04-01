@@ -1,20 +1,23 @@
 package util
 
 import (
-	protoSdk "property-service/proto/sdk"
 	"encoding/json"
+	protoSdk "property-service/proto/sdk"
+	"reflect"
 
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
 var (
-	EXCHANGE = "searchExchange"
-	QUEUE    = "searchQueue"
+	SEARCH_EXCHANGE = "searchExchange"
+	PROPERTY_EXCHANGE = "propertyExchange"
+	PROPERTY_QUEUE    = "propertyQueue"
+	SEARCH_QUEUE    = "searchQueue"
 
 	// ROUTING KEY
-	PropertyCreated = "property.property.created"
-	PropertyUpdated = "property.property.updated"
-	PropertyDeleted = "property.property.deleted"
+	PaymentSuccess = "payment.success"
+	PropertyCreated = "property.created"
+	PropertyUpdated = "property.updated"
 )
 
 func ConvertToGRPC(sdkResult *common.APIResponse) (*protoSdk.BaseResponse, error) {
@@ -57,6 +60,18 @@ func ConvertSlice[T any, K any](slice []K) []T {
 	for _, obj := range slice {
 		item := ConvertStruct[T](obj)
 		result = append(result, item)
+	}
+
+	return result
+}
+
+func ConvertEnumToSlice(obj interface{}) []string {
+	result := []string{}
+
+	v := reflect.ValueOf(obj)
+
+	for i := 0; i < v.NumField(); i++ {
+		result = append(result, v.Field(i).String())
 	}
 
 	return result

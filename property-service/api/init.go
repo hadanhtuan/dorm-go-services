@@ -7,3 +7,7 @@ import (
 type PropertyController struct {
 	protoProperty.UnimplementedPropertyServiceServer
 }
+
+func (pc *PropertyController) InitController() {
+	pc.InitRoutingAMQP()
+}

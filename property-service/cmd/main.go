@@ -4,6 +4,7 @@ import (
 	"property-service/internal"
 	"property-service/internal/model"
 	"property-service/internal/util"
+
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/amqp"
 	"github.com/hadanhtuan/go-sdk/config"
@@ -14,7 +15,7 @@ import (
 func main() {
 	config, _ := config.InitConfig("")
 
-	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
+	amqp.ConnectRabbit(util.PROPERTY_EXCHANGE, util.PROPERTY_QUEUE, amqp.ExchangeType.Topic)
 	dbOrm := orm.ConnectDB()
 	onDBConnected(dbOrm)
 

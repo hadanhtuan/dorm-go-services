@@ -1,20 +1,20 @@
 package util
 
 import (
-	protoSdk "payment-service/proto/sdk"
 	"encoding/json"
+	protoSdk "payment-service/proto/sdk"
 
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
 var (
-	EXCHANGE = "searchExchange"
-	QUEUE    = "searchQueue"
+	PROPERTY_EXCHANGE = "propertyExchange"
+	PAYMENT_EXCHANGE  = "paymentExchange"
+	PROPERTY_QUEUE    = "propertyQueue"
+	PAYMENT_QUEUE     = "paymentQueue"
 
 	// ROUTING KEY
-	PropertyCreated = "property.property.created"
-	PropertyUpdated = "property.property.updated"
-	PropertyDeleted = "property.property.deleted"
+	PaymentSuccess = "payment.success"
 )
 
 func ConvertToGRPC(sdkResult *common.APIResponse) (*protoSdk.BaseResponse, error) {

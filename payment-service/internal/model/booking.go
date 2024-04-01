@@ -1,11 +1,8 @@
 package model
 
 import (
-	"property-service/internal/model/enum"
+	"payment-service/internal/model/enum"
 	"time"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
-	"gorm.io/gorm"
 )
 
 type Booking struct {
@@ -31,18 +28,4 @@ type Booking struct {
 	TotalPriceBeforeTax float64 `json:"totalPriceBeforeTax,omitempty" gorm:"column:total_price_before_tax"`
 	TotalPrice          float64 `json:"totalPrice,omitempty" gorm:"column:total_price"`
 	TaxFee              float64 `json:"taxFee,omitempty" gorm:"column:tax_fee"`
-}
-
-func (Booking) TableName() string {
-	return "booking"
-}
-
-var BookingDB = &orm.Instance{
-	TableName: "booking",
-	Model:     &Booking{},
-}
-
-func InitTableBooking(db *gorm.DB) {
-	db.AutoMigrate(&Booking{})
-	BookingDB.ApplyDatabase(db)
 }

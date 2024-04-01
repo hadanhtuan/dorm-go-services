@@ -16,7 +16,7 @@ import (
 func main() {
 	config, _ := config.InitConfig("")
 
-	amqp.ConnectRabbit(util.EXCHANGE, util.QUEUE, amqp.ExchangeType.Topic)
+	amqp.ConnectRabbit(util.PAYMENT_EXCHANGE, util.PAYMENT_QUEUE, amqp.ExchangeType.Topic)
 	stripe.Key = config.Stripe.SecretKey
 
 	dbOrm := orm.ConnectDB()

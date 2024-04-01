@@ -52,6 +52,7 @@ func (bc *PaymentController) HookPayment(ctx context.Context, req *protoPayment.
 	_ = model.PaymentLogDB.Update(filter, data)
 
 	// TODO: send event to property
+	go bc.BookingSuccess(req.BookingId)
 
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,

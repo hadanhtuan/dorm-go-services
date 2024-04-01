@@ -8,7 +8,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/update"
 	"github.com/hadanhtuan/go-sdk/amqp"
-	"github.com/hadanhtuan/go-sdk/db/elasticsearch"
+	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
 )
 
 func (pc *SearchController) bindingMap() map[string]amqp.CallbackFunc {
@@ -23,10 +23,10 @@ func (pc *SearchController) InitRoutingAMQP() {
 	bindingMap := pc.bindingMap()
 
 	for routingKey, execFunc := range bindingMap {
-		instance.BindingQueue(util.EXCHANGE, util.QUEUE, routingKey, execFunc)
+		instance.BindingQueue(util.SEARCH_EXCHANGE, util.SEARCH_QUEUE, routingKey, execFunc)
 	}
 
-	instance.StartConsume(util.QUEUE)
+	instance.StartConsume(util.SEARCH_QUEUE)
 }
 
 func (pc *SearchController) EventPropertyCreated(payload []byte) {

@@ -2,9 +2,10 @@ package model
 
 import (
 	"property-service/internal/model/enum"
+	"time"
+
 	"github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Property struct {
@@ -14,8 +15,8 @@ type Property struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	//has many
-	Reviews  []*Review  `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
-	Bookings []*Booking `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
+	Reviews  []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
+	Bookings []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
 	Favorite []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
 
 	//many2many
@@ -24,8 +25,10 @@ type Property struct {
 	//foreign key
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
 
-	PropertyType *enum.PropertyTypeValue `json:"propertyType,omitempty" gorm:"column:property_type"`
-	OverallRate  float32                 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
+	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
+	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
+
+	OverallRate float32 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
 
 	MaxGuests    int32 `json:"maxGuests,omitempty" gorm:"column:max_guests"`
 	MaxPets      int32 `json:"maxPets,omitempty" gorm:"column:max_Pets"`
@@ -47,8 +50,9 @@ type Property struct {
 	Lat        *string `json:"lat,omitempty" gorm:"column:lat"`
 	Long       *string `json:"long,omitempty" gorm:"column:long"`
 
-	NightPrice float32 `json:"nightPrice,omitempty" gorm:"column:night_price"`
-	ServiceFee float32 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
+	NightPrice float64 `json:"nightPrice,omitempty" gorm:"column:night_price"`
+	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
+	TaxPercent float64 `json:"taxPercent,omitempty" gorm:"column:tax_percent"`
 }
 
 func (Property) TableName() string {
