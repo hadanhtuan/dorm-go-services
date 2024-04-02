@@ -3,8 +3,7 @@ package model
 import (
 	"time"
 	"user-service/internal/model/enum"
-
-	orm "github.com/hadanhtuan/go-sdk/db/orm"
+	"github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +14,7 @@ type User struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	//has many
-	LoginLogs []*LoginLog `json:"loginLogs,omitempty" gorm:"foreignKey:user_id"`
+	LoginSessions []*LoginSession `json:"loginSessions,omitempty" gorm:"foreignKey:user_id"`
 
 	Role *enum.UserRoleValue `json:"role,omitempty" gorm:"column:role"`
 
