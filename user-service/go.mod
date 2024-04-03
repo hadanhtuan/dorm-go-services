@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/hadanhtuan/go-sdk v0.0.0-20240402035616-e9406d1e55a1
+	github.com/hadanhtuan/go-sdk v0.0.0-20240402065837-dd97bddf638c
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 	gorm.io/gorm v1.25.9

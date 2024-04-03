@@ -3,15 +3,15 @@ package apiUser
 import (
 	"context"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/hadanhtuan/go-sdk"
+	"github.com/hadanhtuan/go-sdk/common"
 	"time"
 	"user-service/internal/model"
 	"user-service/internal/model/enum"
 	"user-service/internal/util"
 	protoSdk "user-service/proto/sdk"
 	protoUser "user-service/proto/user"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/hadanhtuan/go-sdk"
-	"github.com/hadanhtuan/go-sdk/common"
 )
 
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
@@ -281,7 +281,12 @@ func CreateNewSeason(userID, userAgent, ipAddress, deviceID string) (*common.JWT
 		ExpiresAt:    refreshExpiresAt.Unix(),
 	}
 
-	_ = model.LoginSessionDB.Create(loginSession)
+	updater := &model.LoginSession{
+		UserId:   userID,
+		DeviceID: deviceID,
+	}
+
+	_ = model.LoginSessionDB.UpdateOrCreate(loginSession, updater)
 
 	return &common.JWTToken{
 		AccessToken:      accessToken,
