@@ -26,6 +26,7 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *MsgUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	UpdateUser(ctx context.Context, in *MsgUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	GetUsers(ctx context.Context, in *MsgQueryUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	GetUsersByIds(ctx context.Context, in *MsgQueryUserByIds, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	Register(ctx context.Context, in *MsgUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	RefreshToken(ctx context.Context, in *MsgToken, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	Logout(ctx context.Context, in *MsgUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
@@ -62,6 +63,15 @@ func (c *userServiceClient) UpdateUser(ctx context.Context, in *MsgUser, opts ..
 func (c *userServiceClient) GetUsers(ctx context.Context, in *MsgQueryUser, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
 	out := new(sdk.BaseResponse)
 	err := c.cc.Invoke(ctx, "/userService.userService/getUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUsersByIds(ctx context.Context, in *MsgQueryUserByIds, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/userService.userService/getUsersByIds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,6 +130,7 @@ type UserServiceServer interface {
 	Login(context.Context, *MsgUser) (*sdk.BaseResponse, error)
 	UpdateUser(context.Context, *MsgUser) (*sdk.BaseResponse, error)
 	GetUsers(context.Context, *MsgQueryUser) (*sdk.BaseResponse, error)
+	GetUsersByIds(context.Context, *MsgQueryUserByIds) (*sdk.BaseResponse, error)
 	Register(context.Context, *MsgUser) (*sdk.BaseResponse, error)
 	RefreshToken(context.Context, *MsgToken) (*sdk.BaseResponse, error)
 	Logout(context.Context, *MsgUser) (*sdk.BaseResponse, error)
@@ -140,6 +151,9 @@ func (UnimplementedUserServiceServer) UpdateUser(context.Context, *MsgUser) (*sd
 }
 func (UnimplementedUserServiceServer) GetUsers(context.Context, *MsgQueryUser) (*sdk.BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
+}
+func (UnimplementedUserServiceServer) GetUsersByIds(context.Context, *MsgQueryUserByIds) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsersByIds not implemented")
 }
 func (UnimplementedUserServiceServer) Register(context.Context, *MsgUser) (*sdk.BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
@@ -219,6 +233,24 @@ func _UserService_GetUsers_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetUsers(ctx, req.(*MsgQueryUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUsersByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgQueryUserByIds)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUsersByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userService.userService/getUsersByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUsersByIds(ctx, req.(*MsgQueryUserByIds))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -331,6 +363,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getUsers",
 			Handler:    _UserService_GetUsers_Handler,
+		},
+		{
+			MethodName: "getUsersByIds",
+			Handler:    _UserService_GetUsersByIds_Handler,
 		},
 		{
 			MethodName: "register",

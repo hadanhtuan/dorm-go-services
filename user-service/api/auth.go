@@ -3,28 +3,38 @@ package apiUser
 import (
 	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/hadanhtuan/go-sdk"
-	"github.com/hadanhtuan/go-sdk/common"
 	"time"
 	"user-service/internal/model"
 	"user-service/internal/model/enum"
 	"user-service/internal/util"
 	protoSdk "user-service/proto/sdk"
 	protoUser "user-service/proto/user"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/hadanhtuan/go-sdk"
+	"github.com/hadanhtuan/go-sdk/common"
 )
 
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	filter := &model.User{}
 
+	fmt.Println(req.Email)
+
+	if req.Email == "" {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Email not null",
+		})
+	}
+
 	filter.Email = req.Email
 
 	result := model.UserDB.QueryOne(filter, nil)
 	if result.Data == nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
 			Message: "Username or password incorrect",
-		}, nil
+		})
 	}
 	data := result.Data.([]*model.User)[0]
 
@@ -237,6 +247,16 @@ func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryU
 	}
 
 	result := model.UserDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, nil)
+	return util.ConvertToGRPC(result)
+}
+
+func (pc *UserController) GetUsersByIds(ctx context.Context, req *protoUser.MsgQueryUserByIds) (*protoSdk.BaseResponse, error) {
+	fmt.Println(req.Ids)
+
+	result := model.UserDB.Query(req.Ids, req.Paginate.Offset, req.Paginate.Limit, nil)
+
+	fmt.Println(result.Status)
+
 	return util.ConvertToGRPC(result)
 }
 

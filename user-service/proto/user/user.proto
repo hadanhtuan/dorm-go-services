@@ -10,6 +10,7 @@ service userService {
   rpc login(MsgUser) returns (sdk.BaseResponse);
   rpc updateUser(MsgUser) returns (sdk.BaseResponse);
   rpc getUsers(MsgQueryUser) returns (sdk.BaseResponse);
+  rpc getUsersByIds(MsgQueryUserByIds) returns (sdk.BaseResponse);
   rpc register(MsgUser) returns (sdk.BaseResponse);
   rpc refreshToken(MsgToken) returns (sdk.BaseResponse);
   rpc logout(MsgUser) returns (sdk.BaseResponse);
@@ -27,6 +28,7 @@ message MsgUser {
   string phone = 6;
   string password = 7;
   string gender = 8;
+  string address = 21;
   int64 dob = 9;
   optional bool isActive = 10;
   string userAgent = 11;
@@ -51,6 +53,11 @@ message MsgQueryUser {
   optional sdk.TimeQuery timeQuery = 2;
   optional MsgUser queryFields = 3;
   optional OrderUser orderFields = 4;
+}
+
+message MsgQueryUserByIds {
+  sdk.Pagination paginate = 1;
+  repeated string ids = 3;
 }
 
 message OrderUser {

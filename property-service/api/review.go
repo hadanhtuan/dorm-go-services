@@ -1,12 +1,12 @@
 package apiProperty
 
 import (
+	"context"
+	"encoding/json"
 	"property-service/internal/model"
 	"property-service/internal/util"
 	protoProperty "property-service/proto/property"
 	protoSdk "property-service/proto/sdk"
-	"context"
-	"fmt"
 
 	"github.com/hadanhtuan/go-sdk/common"
 	"github.com/hadanhtuan/go-sdk/db/orm"
@@ -67,16 +67,45 @@ func (bc *PropertyController) DeleteReview(ctx context.Context, req *protoProper
 func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.MsgQueryReview) (*protoSdk.BaseResponse, error) {
 	filter := &model.Review{}
 
-	if req.QueryFields.PropertyId != nil {
+	if req.QueryFields.PropertyId != nil && *req.QueryFields.PropertyId != "" {
 		filter.PropertyId = req.QueryFields.PropertyId
 	}
 
 	result := model.ReviewDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
-		Order: []string{"created_at asc"},
+		Order: []string{"created_at desc"},
 	})
 
 	data := result.Data.([]*model.Review)
-	fmt.Println(data)
+
+	result = bc.MapReviewWithUser(data)
 
 	return util.ConvertToGRPC(result)
+}
+
+func (bc *PropertyController) MapReviewWithUser(data []*model.Review) *common.APIResponse {
+	ids := []string{}
+	for _, review := range data {
+		ids = append(ids, review.UserId)
+	}
+
+	result := bc.GetUsers(ids)
+	users := make([]*model.User, len(ids))
+
+	encodeData, _ := json.Marshal(result.Data)
+	json.Unmarshal(encodeData, &users)
+
+	dict := make(map[string]*model.User, len(ids))
+	for _, user := range users {
+		dict[user.ID] = user
+	}
+
+	for i := 0; i < len(data); i++ {
+		data[i].User = *dict[data[i].UserId]
+	}
+
+	return &common.APIResponse{
+		Data:    data,
+		Status:  common.APIStatus.Ok,
+		Message: "Query reviews with user successfully",
+	}
 }
