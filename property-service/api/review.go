@@ -77,9 +77,10 @@ func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.
 
 	data := result.Data.([]*model.Review)
 
-	result = bc.MapReviewWithUser(data)
+	mapResult := bc.MapReviewWithUser(data)
+	mapResult.Total = result.Total
 
-	return util.ConvertToGRPC(result)
+	return util.ConvertToGRPC(mapResult)
 }
 
 func (bc *PropertyController) MapReviewWithUser(data []*model.Review) *common.APIResponse {
