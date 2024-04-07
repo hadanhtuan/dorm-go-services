@@ -2,6 +2,7 @@ package apiUser
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"user-service/internal/model"
 	"user-service/internal/model/enum"
@@ -11,21 +12,29 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/hadanhtuan/go-sdk"
-	"github.com/hadanhtuan/go-sdk/aws"
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	filter := &model.User{}
 
+	fmt.Println(req.Email)
+
+	if req.Email == "" {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Email not null",
+		})
+	}
+
 	filter.Email = req.Email
 
 	result := model.UserDB.QueryOne(filter, nil)
 	if result.Data == nil {
-		return &protoSdk.BaseResponse{
+		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
 			Message: "Username or password incorrect",
-		}, nil
+		})
 	}
 	data := result.Data.([]*model.User)[0]
 
@@ -105,7 +114,7 @@ func (pc *UserController) UpdateUser(ctx context.Context, req *protoUser.MsgUser
 	if req.Gender != "" {
 		user.Gender = req.Gender
 	}
-	
+
 	if req.Password != "" {
 		hashPassword, _ := sdk.HashPassword(req.Password)
 		user.Password = hashPassword
@@ -118,54 +127,29 @@ func (pc *UserController) UpdateUser(ctx context.Context, req *protoUser.MsgUser
 }
 
 func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
-	jwtPayload, err := aws.VerifyJWT(req.Token)
+	result := model.LoginSessionDB.QueryOne(&model.LoginSession{
+		RefreshToken: req.RefreshToken,
+	}, nil)
 
-	if err != nil {
+	if result.Status == common.APIStatus.NotFound {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
-			Message: "Error verify jwt. Error detail: " + err.Error(),
+			Message: "Not found login session, please login again.",
 		})
 	}
-	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
-	deadlineOutdate := time.Now().Add(24 * time.Hour)
+	loginSession := result.Data.([]*model.LoginSession)[0]
 
-	//TODO: Can only refresh token if token expires within 1 day
-	if expireTime.Before(time.Now()) && expireTime.After(deadlineOutdate) {
+	expireTime := loginSession.ExpiresAt
+
+	//TODO: Can only refresh token only if refresh token not expires
+	if expireTime < time.Now().Unix() {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
 			Message: "Invalid refresh, please login again",
 		})
 	}
 
-	filter := map[string]interface{}{}
-	filter["user_id"] = jwtPayload.UserID
-	filter["id"] = jwtPayload.LoginLogID
-	filter["device_id"] = jwtPayload.DeviceID
-	// filter["expires_at"] = expireTime
-	filter["is_logout"] = false
-
-	result := model.LoginLogDB.QueryOne(filter, nil)
-
-	if result.Status == common.APIStatus.NotFound {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.Unauthorized,
-			Message: "Not found season, please login again",
-		})
-	}
-
-	loginLog := result.Data.([]*model.LoginLog)[0]
-
-	if loginLog.ExpiresAt.Before(deadlineOutdate) || loginLog.ExpiresAt.Before(expireTime) {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.Unauthorized,
-			Message: "Season outdate, please login again",
-		})
-	}
-
-	loginLog.IsLogout = true
-	model.LoginLogDB.Update(filter, loginLog) //TODO: delete old season
-
-	token, err := CreateNewSeason(jwtPayload.UserID, loginLog.UserAgent, loginLog.IpAddress, jwtPayload.DeviceID)
+	token, err := CreateNewSeason(loginSession.UserId, loginSession.UserAgent, loginSession.IpAddress, loginSession.DeviceID)
 
 	if err != nil {
 		return util.ConvertToGRPC(&common.APIResponse{
@@ -181,18 +165,14 @@ func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgTo
 	})
 }
 
-func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgID) (*protoSdk.BaseResponse, error) {
+func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 
-	filter := map[string]interface{}{}
-	filter["id"] = req.Id
-	filter["is_logout"] = false
-
-	loginLog := &model.LoginLog{
-		ExpiresAt: time.Now(),
-		IsLogout:  true,
+	filter := &model.LoginSession{
+		UserId:   req.Id,
+		DeviceID: req.DeviceId,
 	}
 
-	model.LoginLogDB.Update(filter, loginLog)
+	model.LoginSessionDB.Delete(filter)
 
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status:  common.APIStatus.Ok,
@@ -201,31 +181,28 @@ func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgID) (*pr
 }
 
 func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
-	jwtPayload, _ := aws.VerifyJWT(req.Token)
-	expireTime := jwtPayload.RegisteredClaims.ExpiresAt.Time
-
-	if expireTime.Before(time.Now()) {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.Unauthorized,
-			Message: "Token timeout, please login again",
-		})
-	}
-
-	filter := map[string]interface{}{}
-	filter["user_id"] = jwtPayload.UserID
-	filter["id"] = jwtPayload.LoginLogID
-	filter["device_id"] = jwtPayload.DeviceID
-	filter["is_logout"] = false
-
-	result := model.LoginLogDB.QueryOne(filter, nil)
+	result := model.LoginSessionDB.QueryOne(&model.LoginSession{
+		UserId:   req.UserId,
+		DeviceID: req.DeviceId,
+	}, nil)
 
 	if result.Status == common.APIStatus.NotFound {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
-			Message: "Not found season, please login again",
+			Message: "Not found login session, please login again.",
 		})
 	}
 
+	loginSession := result.Data.([]*model.LoginSession)[0]
+
+	jwtPayload, err := VerifyJWT(req.AccessToken, loginSession.SecretKey)
+
+	if err != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.Unauthorized,
+			Message: "Error verify jwt. Error detail: " + err.Error(),
+		})
+	}
 	return util.ConvertToGRPC(&common.APIResponse{
 		Status: common.APIStatus.Ok,
 		Data:   jwtPayload,
@@ -273,29 +250,88 @@ func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryU
 	return util.ConvertToGRPC(result)
 }
 
+func (pc *UserController) GetUsersByIds(ctx context.Context, req *protoUser.MsgQueryUserByIds) (*protoSdk.BaseResponse, error) {
+	fmt.Println(req.Ids)
+
+	result := model.UserDB.Query(req.Ids, req.Paginate.Offset, req.Paginate.Limit, nil)
+
+	fmt.Println(result.Status)
+
+	return util.ConvertToGRPC(result)
+}
+
 func CreateNewSeason(userID, userAgent, ipAddress, deviceID string) (*common.JWTToken, error) {
 	expiresAt := time.Now().Add(3 * 24 * time.Hour) //TODO: token expire after 3 day
+	refreshExpiresAt := expiresAt.Add(24 * time.Hour)
 
-	result := model.LoginLogDB.Create(&model.LoginLog{ //TODO: create new season
-		UserId:    userID,
-		UserAgent: userAgent,
-		IpAddress: ipAddress,
-		DeviceID:  deviceID,
-		ExpiresAt: expiresAt,
-		IsLogout:  false,
-	})
-	loginLog := result.Data.([]*model.LoginLog)[0]
+	// //TODO: each JWT have a unique login log ID
+	// jwtPayload := &common.JWTPayload{
+	// 	UserID:   userID,
+	// 	DeviceID: deviceID,
+	// 	RegisteredClaims: jwt.RegisteredClaims{
+	// 		ExpiresAt: jwt.NewNumericDate(expiresAt),
+	// 	},
+	// }
+	// token, err := aws.NewJWT(jwtPayload)
 
-	//TODO: each JWT have a unique login log ID
 	jwtPayload := &common.JWTPayload{
-		UserID:     userID,
-		LoginLogID: loginLog.ID,
-		DeviceID:   deviceID,
+		UserID:   userID,
+		DeviceID: deviceID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
 	}
-	token, err := aws.NewJWT(jwtPayload)
 
-	return token, err
+	secretKey := sdk.RandomString(10)
+	refreshToken := sdk.RandomString(25)
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtPayload)
+	accessToken, err := jwtToken.SignedString([]byte(secretKey))
+
+	if err != nil {
+		return nil, err
+	}
+
+	loginSession := &model.LoginSession{
+		UserId:       userID,
+		DeviceID:     deviceID,
+		RefreshToken: refreshToken,
+		UserAgent:    userAgent,
+		IpAddress:    ipAddress,
+		SecretKey:    secretKey,
+		ExpiresAt:    refreshExpiresAt.Unix(),
+	}
+
+	updater := &model.LoginSession{
+		UserId:   userID,
+		DeviceID: deviceID,
+	}
+
+	_ = model.LoginSessionDB.UpdateOrCreate(loginSession, updater)
+
+	return &common.JWTToken{
+		AccessToken:      accessToken,
+		AccessExpiresAt:  expiresAt.Unix(),
+		RefreshToken:     refreshToken,
+		RefreshExpiresAt: refreshExpiresAt.Unix(),
+	}, nil
+}
+
+func VerifyJWT(accessToken string, secret string) (*common.JWTPayload, error) {
+
+	payload := common.JWTPayload{}
+
+	claim, err := jwt.ParseWithClaims(accessToken, &payload, func(t *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the token is valid
+	if !claim.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	return &payload, nil
 }

@@ -17,7 +17,7 @@ type Property struct {
 	//has many
 	Reviews  []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
 	Bookings []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
-	Favorite []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
+	Favorites []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
 
 	//many2many
 	Amenities []*Amenity `json:"amenities,omitempty" gorm:"many2many:property_amenity;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -45,6 +45,7 @@ type Property struct {
 	Title string `json:"title,omitempty" gorm:"column:title"`
 	Body  string `json:"body,omitempty" gorm:"column:body"`
 
+	Address    *string `json:"address,omitempty" gorm:"column:address"`
 	CityCode   *string `json:"cityCode,omitempty" gorm:"column:city_code"`
 	NationCode *string `json:"nationCode,omitempty" gorm:"column:nation_code"`
 	Lat        *string `json:"lat,omitempty" gorm:"column:lat"`

@@ -13,6 +13,9 @@ type Review struct {
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
+	//ignore
+	User User `json:"user,omitempty" gorm:"-:all"`
+
 	//foreign key
 	PropertyId *string  `json:"propertyId,omitempty" gorm:"column:property_id"`
 	ParentId   *string `json:"parentId,omitempty"  gorm:"column:parent_id"`

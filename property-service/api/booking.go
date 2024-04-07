@@ -15,7 +15,7 @@ import (
 )
 
 func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
-	if req.CheckInDate < time.Now().Unix() || req.CheckInDate >= req.CheckoutDate {
+	if req.CheckInDate < time.Now().Add(-24*time.Hour).Unix() || req.CheckInDate >= req.CheckoutDate {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.BadRequest,
 			Message: "Error booking. Checkin time not valid",
@@ -23,8 +23,9 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	}
 
 	var previousBooking model.Booking
-	model.BookingDB.DB.Where("checkin_date BETWEEN ? OR ?", req.CheckInDate, req.CheckoutDate).
-		Or("checkout_date BETWEEN ? OR ?", req.CheckInDate, req.CheckoutDate).
+	model.BookingDB.DB.Where("property_id = ?", req.PropertyId).
+		Where("checkin_date BETWEEN ? AND ?", req.CheckInDate, req.CheckoutDate).
+		Or("checkout_date BETWEEN ? AND ?", req.CheckInDate, req.CheckoutDate).
 		First(&previousBooking)
 
 	if previousBooking.ID != "" {

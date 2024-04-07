@@ -41,3 +41,16 @@ var PropertyStatus = &PropertyStatusEnt{
 	Approve:  "APPROVE",
 	Reject:   "REJECT",
 }
+
+
+type UserRoleValue string
+type UserRoleEnt struct {
+	User  UserRoleValue
+	Host  UserRoleValue
+	Admin UserRoleValue
+}
+var UserRole = &UserRoleEnt{
+	User:  "USER",
+	Host:  "HOST",
+	Admin: "ADMIN",
+}

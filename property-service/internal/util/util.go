@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"property-service/proto/sdk"
 	protoSdk "property-service/proto/sdk"
 	"reflect"
 
@@ -9,13 +10,13 @@ import (
 )
 
 var (
-	SEARCH_EXCHANGE = "searchExchange"
+	SEARCH_EXCHANGE   = "searchExchange"
 	PROPERTY_EXCHANGE = "propertyExchange"
 	PROPERTY_QUEUE    = "propertyQueue"
-	SEARCH_QUEUE    = "searchQueue"
+	SEARCH_QUEUE      = "searchQueue"
 
 	// ROUTING KEY
-	PaymentSuccess = "payment.success"
+	PaymentSuccess  = "payment.success"
 	PropertyCreated = "property.created"
 	PropertyUpdated = "property.updated"
 )
@@ -75,4 +76,29 @@ func ConvertEnumToSlice(obj interface{}) []string {
 	}
 
 	return result
+}
+
+func ConvertGrpcResult(payload *sdk.BaseResponse) *common.APIResponse {
+	var data interface{}
+
+	if payload == nil {
+		return &common.APIResponse{
+			Message: "Internal Server Error",
+			Status:  common.APIStatus.ServerError,
+		}
+	}
+	err := json.Unmarshal([]byte(payload.Data), &data)
+	if err != nil {
+		return &common.APIResponse{
+			Message: payload.Message,
+			Status:  payload.Status,
+		}
+	}
+
+	return &common.APIResponse{
+		Message: payload.Message,
+		Status:  payload.Status,
+		Total:   payload.Total,
+		Data:    data,
+	}
 }
