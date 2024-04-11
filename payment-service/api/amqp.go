@@ -15,7 +15,7 @@ func (pc *PaymentController) BookingSuccess(bookingId string) {
 	}
 	encodeData, _ := json.Marshal(data)
 	instant := amqp.GetConnection()
-	err := instant.PublishMessage(util.PROPERTY_EXCHANGE, util.PAYMENT_EXCHANGE, encodeData)
+	err := instant.PublishMessage(util.PROPERTY_EXCHANGE, util.PaymentSuccess, encodeData)
 
 	if err != nil {
 		fmt.Println(err.Error())

@@ -61,6 +61,9 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 		BabyNumber:          req.BabyNumber,
 		PetNumber:           req.PetNumber,
 		NightNumber:         req.NightNumber,
+		NightPrice:          property.NightPrice,
+		ServiceFee:          property.ServiceFee,
+		TaxPercent:          property.TaxPercent,
 		TotalPriceBeforeTax: totalPriceBeforeTax,
 		TotalPrice:          totalPrice,
 		TaxFee:              taxFee,
@@ -146,7 +149,7 @@ func (bc *PropertyController) GetBooking(ctx context.Context, req *protoProperty
 		filter.Status = &status
 	}
 
-	if orderField.CreatedAt != nil {
+	if orderField != nil && orderField.CreatedAt != nil {
 		sort = append(sort, "created_at "+orderField.CreatedAt.String())
 	}
 
@@ -154,7 +157,8 @@ func (bc *PropertyController) GetBooking(ctx context.Context, req *protoProperty
 		req.Paginate.Offset,
 		req.Paginate.Limit,
 		&orm.QueryOption{
-			Order: sort,
+			Order:   sort,
+			Preload: []string{"Property"}, // Struct name, not table name
 		},
 	)
 

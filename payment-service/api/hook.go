@@ -2,6 +2,7 @@ package apiPayment
 
 import (
 	"context"
+	"fmt"
 	"payment-service/internal/model"
 	"payment-service/internal/util"
 	protoPayment "payment-service/proto/payment"
@@ -32,6 +33,8 @@ func (bc *PaymentController) HookPayment(ctx context.Context, req *protoPayment.
 	filter := &model.PaymentLog{
 		BookingId: &req.BookingId,
 	}
+
+	fmt.Println(req.BookingId)
 
 	result := model.PaymentLogDB.QueryOne(filter, nil)
 
