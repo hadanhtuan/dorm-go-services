@@ -6,6 +6,7 @@ import (
 	"property-service/internal/model"
 	"property-service/internal/model/enum"
 	"property-service/internal/util"
+	"time"
 
 	"github.com/hadanhtuan/go-sdk/amqp"
 	"github.com/hadanhtuan/go-sdk/common"
@@ -36,6 +37,7 @@ func (pc *PropertyController) EventPaymentSuccess(payload []byte) {
 
 	filter := data
 
+	data.PaymentDate = time.Now().Unix()
 	data.Status = &enum.BookingStatus.Success
 	_ = model.BookingDB.Update(filter, data)
 }

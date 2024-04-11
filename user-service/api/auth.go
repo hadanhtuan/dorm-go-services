@@ -18,8 +18,6 @@ import (
 func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	filter := &model.User{}
 
-	fmt.Println(req.Email)
-
 	if req.Email == "" {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.Unauthorized,
@@ -181,9 +179,13 @@ func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgUser) (*
 }
 
 func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+	payload := common.JWTPayload{}
+
+	jwt.ParseWithClaims(req.AccessToken, &payload, nil)
+
 	result := model.LoginSessionDB.QueryOne(&model.LoginSession{
-		UserId:   req.UserId,
-		DeviceID: req.DeviceId,
+		UserId:   payload.UserID,
+		DeviceID: payload.DeviceID,
 	}, nil)
 
 	if result.Status == common.APIStatus.NotFound {
@@ -251,11 +253,8 @@ func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryU
 }
 
 func (pc *UserController) GetUsersByIds(ctx context.Context, req *protoUser.MsgQueryUserByIds) (*protoSdk.BaseResponse, error) {
-	fmt.Println(req.Ids)
 
 	result := model.UserDB.Query(req.Ids, req.Paginate.Offset, req.Paginate.Limit, nil)
-
-	fmt.Println(result.Status)
 
 	return util.ConvertToGRPC(result)
 }

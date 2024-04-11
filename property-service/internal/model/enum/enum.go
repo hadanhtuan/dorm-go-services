@@ -2,7 +2,6 @@ package enum
 
 type BookingStatusValue string
 type BookingStatusEnt struct {
-	Payment     BookingStatusValue
 	WaitToCheck BookingStatusValue
 	Success     BookingStatusValue
 	Rejected    BookingStatusValue

@@ -2,19 +2,18 @@ package apiPayment
 
 import (
 	"context"
+	"github.com/hadanhtuan/go-sdk/common"
+	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/paymentintent"
 	"payment-service/internal/model"
 	"payment-service/internal/util"
 	protoPayment "payment-service/proto/payment"
 	protoSdk "payment-service/proto/sdk"
-
-	"github.com/hadanhtuan/go-sdk/common"
-	"github.com/stripe/stripe-go/v76"
-	"github.com/stripe/stripe-go/v76/paymentintent"
 )
 
 func (bc *PaymentController) CreatePaymentIntent(ctx context.Context, req *protoPayment.MsgCreatePaymentIntent) (*protoSdk.BaseResponse, error) {
 	params := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(req.Amount),
+		Amount:   stripe.Int64(req.Amount*100),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		AutomaticPaymentMethods: &stripe.PaymentIntentAutomaticPaymentMethodsParams{
 			Enabled: stripe.Bool(true),
@@ -59,8 +58,10 @@ func (bc *PaymentController) CreatePaymentIntent(ctx context.Context, req *proto
 flow:
 1. Create payment intent
 2. Fe call stripe
-3. Be handle webhook. 
-	Test: stripe trigger payment_intent.succeeded --add "payment_intent:metadata[bookingId]=booking1"
+3. Be handle webhook.
+	Test: 
+	stripe listen --forward-to localhost:3000/api/payment/hook
+	stripe trigger payment_intent.succeeded --add "payment_intent:metadata[bookingId]=booking1"
 
 4. Send event to property service
 */
