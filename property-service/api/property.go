@@ -111,6 +111,14 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 		Amenities: amenities,
 	}
 
+	if req.IntroCover != nil && *req.IntroCover != "" {
+		property.IntroCover = req.IntroCover
+	}
+
+	if len(req.IntroImages) > 0 {
+		property.IntroImages.Set(req.IntroImages)
+	}
+
 	result := model.PropertyDB.Create(property)
 
 	data := result.Data.([]*model.Property)[0]

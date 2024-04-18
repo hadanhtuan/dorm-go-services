@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/hadanhtuan/go-sdk/db/orm"
+	"github.com/jackc/pgx/pgtype"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +16,8 @@ type Property struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	//has many
-	Reviews  []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
-	Bookings []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
+	Reviews   []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
+	Bookings  []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
 	Favorites []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
 
 	//many2many
@@ -54,6 +55,9 @@ type Property struct {
 	NightPrice float64 `json:"nightPrice,omitempty" gorm:"column:night_price"`
 	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
 	TaxPercent float64 `json:"taxPercent,omitempty" gorm:"column:tax_percent"`
+
+	IntroCover  *string      `json:"introCover,omitempty" gorm:"column:intro_cover"`
+	IntroImages pgtype.JSONB `json:"introImages,omitempty" gorm:"column:intro_images;type:jsonb;default:'[]';not null"`
 }
 
 func (Property) TableName() string {
