@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/hadanhtuan/go-sdk/db/orm"
-	"github.com/jackc/pgx/pgtype"
 	"gorm.io/gorm"
 )
 
@@ -56,8 +55,8 @@ type Property struct {
 	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
 	TaxPercent float64 `json:"taxPercent,omitempty" gorm:"column:tax_percent"`
 
-	IntroCover  *string      `json:"introCover,omitempty" gorm:"column:intro_cover"`
-	IntroImages pgtype.JSONB `json:"introImages,omitempty" gorm:"column:intro_images;type:jsonb;default:'[]';not null"`
+	IntroCover  *string `json:"introCover,omitempty" gorm:"column:intro_cover"`
+	IntroImages *string `json:"introImages,omitempty" gorm:"column:intro_images;default:'[]'"`
 }
 
 func (Property) TableName() string {
