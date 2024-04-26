@@ -10,7 +10,6 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"github.com/hadanhtuan/go-sdk/common"
 	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
 	"github.com/ipinfo/go/v2/ipinfo"
 )
@@ -174,6 +173,14 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 		})
 	}
 
+	if queryField.PropertyType != nil {
+		mustQuery = append(mustQuery, types.Query{
+			Match: map[string]types.MatchQuery{
+				"propertyType": {Query: *queryField.PropertyType},
+			},
+		})
+	}
+
 	if queryField.Title != nil {
 		shouldQuery = append(shouldQuery, types.Query{
 			MultiMatch: &types.MultiMatchQuery{
@@ -200,6 +207,7 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	result := es.Search[model.Property](util.PropertyIndex, query)
+
 	return util.ConvertToGRPC(result)
 }
 
@@ -209,18 +217,19 @@ func (sc *SearchController) ListPropertyByIP(ctx context.Context, req *protoSear
 
 	mustQuery := []types.Query{}
 
-	countryCode, err := sc.GetCountryByIp(req.IpAddress)
+	// countryCode, err := sc.GetCountryByIp(req.IpAddress)
+	// fmt.Println(countryCode)
 
-	if err != nil {
-		return util.ConvertToGRPC(&common.APIResponse{
-			Status:  common.APIStatus.BadRequest,
-			Message: "Error parsing country. Error detail: " + err.Error(),
-		})
-	}
+	// if err != nil {
+	// 	return util.ConvertToGRPC(&common.APIResponse{
+	// 		Status:  common.APIStatus.BadRequest,
+	// 		Message: "Error parsing country. Error detail: " + err.Error(),
+	// 	})
+	// }
 
 	mustQuery = append(mustQuery, types.Query{
 		Match: map[string]types.MatchQuery{
-			"nationCode": {Query: countryCode},
+			"nationCode": {Query: "USA"},
 		},
 	})
 
