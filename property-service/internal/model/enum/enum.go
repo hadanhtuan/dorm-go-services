@@ -17,15 +17,47 @@ var BookingStatus = &BookingStatusEnt{
 
 type PropertyTypeValue string
 type PropertyTypeEnt struct {
-	Apartment PropertyTypeValue
-	Home      PropertyTypeValue
-	Hotel     PropertyTypeValue
+	Apartment   PropertyTypeValue
+	Home        PropertyTypeValue
+	Hotel       PropertyTypeValue
+	TreeHouse   PropertyTypeValue
+	Castle      PropertyTypeValue
+	Yacht       PropertyTypeValue
+	CountrySide PropertyTypeValue
+	Camping     PropertyTypeValue
+	BeachFront  PropertyTypeValue
+	Lake        PropertyTypeValue
+	Mountain    PropertyTypeValue
+	Farm        PropertyTypeValue
+	Design      PropertyTypeValue
+	Ryokans     PropertyTypeValue
+	Mansion     PropertyTypeValue
+	Island      PropertyTypeValue
+	Arctic      PropertyTypeValue
+	Golfing     PropertyTypeValue
+	Windmills   PropertyTypeValue
 }
 
 var PropertyType = &PropertyTypeEnt{
-	Apartment: "APARTMENT",
-	Home:      "HOME",
-	Hotel:     "HOTEL",
+	Apartment:   "APARTMENT",
+	Home:        "HOME",
+	Hotel:       "HOTEL",
+	TreeHouse:   "TREE_HOUSE",
+	Castle:      "CASTLE",
+	Yacht:       "YACHT",
+	CountrySide: "COUNTRY_SIDE",
+	Camping:     "CAMPING",
+	BeachFront:  "BEACH_FRONT",
+	Lake:        "LAKE",
+	Mountain:    "MOUNTAIN",
+	Farm:        "FARM",
+	Design:      "DESIGN",
+	Ryokans:     "RYOKANS",
+	Mansion:     "Mansion",
+	Island:      "ISLAND",
+	Arctic:      "ARCTIC",
+	Golfing:     "GOLFING",
+	Windmills:   "WINDMILLS",
 }
 
 type PropertyStatusValue string

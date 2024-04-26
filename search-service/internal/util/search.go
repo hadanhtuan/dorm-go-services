@@ -76,7 +76,19 @@ var PropertyIndexCnf = &create.Request{
 					},
 				},
 			},
+			"hostId": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"hostFirstName": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"hostLastName": types.KeywordProperty{
+				Type: "keyword",
+			},
 			"propertyType": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"status": types.KeywordProperty{
 				Type: "keyword",
 			},
 			"overallRate": types.FloatNumberProperty{
@@ -120,6 +132,9 @@ var PropertyIndexCnf = &create.Request{
 				Type:     "text",
 				Analyzer: &customAnalyzer,
 			},
+			"address": types.KeywordProperty{
+				Type: "keyword",
+			},
 			"cityCode": types.KeywordProperty{
 				Type: "keyword",
 			},
@@ -137,6 +152,24 @@ var PropertyIndexCnf = &create.Request{
 			},
 			"serviceFee": types.FloatNumberProperty{
 				Type: "float",
+			},
+			"introCover": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"introImages": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"bedroomCover": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"bedroomImages": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"otherCover": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"otherImages": types.KeywordProperty{
+				Type: "keyword",
 			},
 		},
 	},

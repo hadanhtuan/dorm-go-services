@@ -25,6 +25,9 @@ type Property struct {
 	//foreign key
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
 
+	HostFirstName string `json:"hostFirstName,omitempty" gorm:"column:host_first_name"`
+	HostLastName  string `json:"hostLastName,omitempty" gorm:"column:host_last_name"`
+
 	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
 
@@ -57,6 +60,13 @@ type Property struct {
 
 	IntroCover  *string `json:"introCover,omitempty" gorm:"column:intro_cover"`
 	IntroImages *string `json:"introImages,omitempty" gorm:"column:intro_images;default:'[]'"`
+
+	BedroomCover  *string `json:"bedroomCover,omitempty" gorm:"column:bedroom_cover"`
+	BedroomImages *string `json:"bedroomImages,omitempty" gorm:"column:bedroom_images;default:'[]'"`
+
+	OtherCover  *string `json:"otherCover,omitempty" gorm:"column:other_cover"`
+	OtherImages *string `json:"otherImages,omitempty" gorm:"column:other_images;default:'[]'"`
+	
 }
 
 func (Property) TableName() string {

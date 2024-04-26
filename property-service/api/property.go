@@ -25,8 +25,8 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 		filter.HostId = req.QueryFields.HostId
 	}
 
-	if req.QueryFields.PropertyStatus != "" {
-		status := enum.PropertyStatusValue(req.QueryFields.PropertyStatus)
+	if req.QueryFields.Status != nil && *req.QueryFields.Status != "" {
+		status := enum.PropertyStatusValue(*req.QueryFields.Status)
 		filter.Status = &status
 	}
 
@@ -91,10 +91,12 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 	amenities := util.ConvertSlice[*model.Amenity](req.Amenities)
 
 	property := &model.Property{
-		HostId:       req.HostId,
-		PropertyType: &propertyType,
-		Status:       &enum.PropertyStatus.InReview,
-		OverallRate:  req.OverallRate,
+		HostId:        req.HostId,
+		HostFirstName: req.HostFirstName,
+		HostLastName:  req.HostLastName,
+		PropertyType:  &propertyType,
+		Status:        &enum.PropertyStatus.InReview,
+		OverallRate:   req.OverallRate,
 
 		MaxGuests:    req.MaxGuests,
 		MaxPets:      req.MaxPets,
