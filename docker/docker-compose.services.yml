@@ -12,8 +12,6 @@ services:
     image: hiimtuan/payment-service
     ports:
       - '4003:4003'
-    networks:
-      - docker_gotrek
     volumes: 
       - ../payment-service/.env:/go/src/app/.env
     env_file: 
@@ -29,8 +27,6 @@ services:
     image: hiimtuan/property-service
     ports:
       - '4001:4001'
-    networks:
-      - docker_gotrek
     volumes: 
       - ../property-service/.env:/go/src/app/.env
     env_file: 
@@ -44,8 +40,6 @@ services:
     image: hiimtuan/search-service
     ports:
       - '4002:4002'
-    networks:
-      - docker_gotrek
     volumes: 
       - ../search-service/.env:/go/src/app/.env
     env_file: 
@@ -59,13 +53,7 @@ services:
     image: hiimtuan/user-service
     ports:
       - '4000:4000'
-    networks:
-      - docker_gotrek
     volumes: 
       - ../user-service/.env:/go/src/app/.env
     env_file: 
       - ../user-service/.env
-
-networks:
-  docker_gotrek:
-    external: true

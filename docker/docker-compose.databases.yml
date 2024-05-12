@@ -9,8 +9,6 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass ${CACHE_PWD}
     volumes:
       - cache:/data
-    networks:
-      - docker_gotrek
 
   postgres:
     container_name: postgres
@@ -28,15 +26,11 @@ services:
       - postgres:/data/postgres
     ports:
       - ${DB_PORT}:5432
-    networks:
-      - docker_gotrek
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     restart: always
-    networks:
-      - docker_gotrek
     ports:
       - ${AMQP_PORT}:5672
       - ${AMQP_UI_PORT}:15672
@@ -63,8 +57,6 @@ services:
       - elastic:/usr/share/elasticsearch/data
     ports:
       - ${ES_PORT}:9200
-    networks:
-      - docker_gotrek
 
   kibana:
     container_name: kibana
@@ -76,14 +68,6 @@ services:
       - ${KIBANA_PORT}:5601
     depends_on:
       - es01
-    networks:
-      - docker_gotrek
-
-networks:
-  docker_gotrek:
-    driver: bridge
-    external: true
-
 
 volumes:
   cache:
