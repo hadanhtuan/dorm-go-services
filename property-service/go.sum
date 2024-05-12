@@ -68,6 +68,8 @@ github.com/hadanhtuan/go-sdk v0.0.0-20240330120415-f70d187acf96 h1:j0O/qCX67oVjv
 github.com/hadanhtuan/go-sdk v0.0.0-20240330120415-f70d187acf96/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
 github.com/hadanhtuan/go-sdk v0.0.0-20240410082901-b155139392dd h1:zl9ZgPBSQhK1yWFKD9/KTCIcQZg2JmELBU2bArYoRDs=
 github.com/hadanhtuan/go-sdk v0.0.0-20240410082901-b155139392dd/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
+github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb h1:xREKj6rmeNiLdPkk8QSCbfAa/2+3tNxJ4bwWUhkld4Q=
+github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb/go.mod h1:xoL+yFx4WTIa6r1rTe4tpSAr+lBikCMXpAM+nIza8w0=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=

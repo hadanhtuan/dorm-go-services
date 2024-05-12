@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	config, _ := config.InitConfig("")
+	config, _ := config.InitConfig(".")
 
 	amqp.ConnectRabbit(util.SEARCH_EXCHANGE, util.SEARCH_QUEUE, amqp.ExchangeType.Topic)
 	es.ConnectElasticSearch()

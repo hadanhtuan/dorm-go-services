@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	config, _ := config.InitConfig("")
+	config, _ := config.InitConfig(".")
 
 	amqp.ConnectRabbit(util.PROPERTY_EXCHANGE, util.PROPERTY_QUEUE, amqp.ExchangeType.Topic)
 	dbOrm := orm.ConnectDB()

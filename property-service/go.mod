@@ -1,9 +1,9 @@
 module property-service
 
-go 1.22.1
+go 1.21.6
 
 require (
-	github.com/hadanhtuan/go-sdk v0.0.0-20240410082901-b155139392dd
+	github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.33.0
 	gorm.io/gorm v1.25.9

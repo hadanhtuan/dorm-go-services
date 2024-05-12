@@ -1,9 +1,9 @@
 module payment-service
 
-go 1.22.1
+go 1.21.6
 
 require (
-	github.com/hadanhtuan/go-sdk v0.0.0-20240328061259-81d18de2175f
+	github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb
 	github.com/stripe/stripe-go/v76 v76.22.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
@@ -49,11 +49,9 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.18.2 // indirect
 	github.com/streadway/amqp v1.1.0 // indirect
-	github.com/stripe/stripe-go/v72 v72.122.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect

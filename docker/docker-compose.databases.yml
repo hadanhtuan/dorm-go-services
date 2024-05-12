@@ -10,7 +10,7 @@ services:
     volumes:
       - cache:/data
     networks:
-      - gotrek
+      - docker_gotrek
 
   postgres:
     container_name: postgres
@@ -29,14 +29,14 @@ services:
     ports:
       - ${DB_PORT}:5432
     networks:
-      - gotrek
+      - docker_gotrek
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     restart: always
     networks:
-      - gotrek
+      - docker_gotrek
     ports:
       - ${AMQP_PORT}:5672
       - ${AMQP_UI_PORT}:15672
@@ -64,7 +64,7 @@ services:
     ports:
       - ${ES_PORT}:9200
     networks:
-      - gotrek
+      - docker_gotrek
 
   kibana:
     container_name: kibana
@@ -77,10 +77,13 @@ services:
     depends_on:
       - es01
     networks:
-      - gotrek
+      - docker_gotrek
+
 networks:
-  gotrek:
+  docker_gotrek:
     driver: bridge
+    external: true
+
 
 volumes:
   cache:
