@@ -16,7 +16,7 @@ import (
 func InitGRPCServer(app *sdk.App) error {
 	propertyServiceHost := fmt.Sprintf(
 		"%s:%s",
-		app.Config.GRPC.PaymentServiceHost,
+		app.Config.GRPC.PropertyServiceHost,
 		app.Config.GRPC.PropertyServicePort,
 	)
 
