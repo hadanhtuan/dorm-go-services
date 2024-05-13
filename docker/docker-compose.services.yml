@@ -16,6 +16,9 @@ services:
       - ../payment-service/.env:/go/src/app/.env
     env_file: 
       - ../payment-service/.env
+    networks:
+      - docker_gotrek
+
   property-service:
     depends_on:
       - user-service
@@ -31,6 +34,9 @@ services:
       - ../property-service/.env:/go/src/app/.env
     env_file: 
       - ../property-service/.env
+    networks:
+      - docker_gotrek
+
   search-service:
     container_name: search-service
     restart: always
@@ -44,6 +50,9 @@ services:
       - ../search-service/.env:/go/src/app/.env
     env_file: 
       - ../search-service/.env
+    networks:
+      - docker_gotrek
+
   user-service:
     container_name: user-service
     restart: always
@@ -57,3 +66,9 @@ services:
       - ../user-service/.env:/go/src/app/.env
     env_file: 
       - ../user-service/.env
+    networks:
+      - docker_gotrek
+
+networks:
+  docker_gotrek:
+    external: true
