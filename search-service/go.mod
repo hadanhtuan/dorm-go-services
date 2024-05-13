@@ -1,11 +1,11 @@
 module search-service
 
-go 1.21.5
+go 1.21.6
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.12.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/hadanhtuan/go-sdk v0.0.0-20240322043726-519658056702
+	github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb
 	github.com/spf13/viper v1.18.2
 	github.com/streadway/amqp v1.1.0
 	google.golang.org/grpc v1.62.1

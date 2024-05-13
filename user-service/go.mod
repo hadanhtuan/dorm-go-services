@@ -1,10 +1,10 @@
 module user-service
 
-go 1.21.5
+go 1.21.6
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/hadanhtuan/go-sdk v0.0.0-20240402065837-dd97bddf638c
+	github.com/hadanhtuan/go-sdk v0.0.0-20240512074202-cd629112cdbb
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 	gorm.io/gorm v1.25.9

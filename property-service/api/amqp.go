@@ -67,6 +67,7 @@ func (bc *PropertyController) SyncUpdateProperty(id string) {
 	}
 
 	data := result.Data.([]*model.Property)[0]
+	fmt.Println(data)
 	encodeData, _ := json.Marshal(data)
 
 	instant := amqp.GetConnection()

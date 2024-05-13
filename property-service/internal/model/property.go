@@ -15,8 +15,8 @@ type Property struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
 
 	//has many
-	Reviews  []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
-	Bookings []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
+	Reviews   []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
+	Bookings  []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
 	Favorites []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
 
 	//many2many
@@ -24,6 +24,9 @@ type Property struct {
 
 	//foreign key
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
+
+	HostFirstName string `json:"hostFirstName,omitempty" gorm:"column:host_first_name"`
+	HostLastName  string `json:"hostLastName,omitempty" gorm:"column:host_last_name"`
 
 	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
@@ -54,6 +57,16 @@ type Property struct {
 	NightPrice float64 `json:"nightPrice,omitempty" gorm:"column:night_price"`
 	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
 	TaxPercent float64 `json:"taxPercent,omitempty" gorm:"column:tax_percent"`
+
+	IntroCover  *string `json:"introCover,omitempty" gorm:"column:intro_cover"`
+	IntroImages *string `json:"introImages,omitempty" gorm:"column:intro_images;default:'[]'"`
+
+	BedroomCover  *string `json:"bedroomCover,omitempty" gorm:"column:bedroom_cover"`
+	BedroomImages *string `json:"bedroomImages,omitempty" gorm:"column:bedroom_images;default:'[]'"`
+
+	OtherCover  *string `json:"otherCover,omitempty" gorm:"column:other_cover"`
+	OtherImages *string `json:"otherImages,omitempty" gorm:"column:other_images;default:'[]'"`
+	
 }
 
 func (Property) TableName() string {

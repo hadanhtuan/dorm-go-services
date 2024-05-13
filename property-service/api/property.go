@@ -2,6 +2,7 @@ package apiProperty
 
 import (
 	"context"
+	"encoding/json"
 	"property-service/internal/model"
 	"property-service/internal/model/enum"
 	"property-service/internal/util"
@@ -20,6 +21,15 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 		filter.ID = *req.QueryFields.Id
 	}
 
+	if req.QueryFields.HostId != "" {
+		filter.HostId = req.QueryFields.HostId
+	}
+
+	if req.QueryFields.Status != nil && *req.QueryFields.Status != "" {
+		status := enum.PropertyStatusValue(*req.QueryFields.Status)
+		filter.Status = &status
+	}
+
 	result := model.PropertyDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
 		Preload: []string{"Reviews", "Amenities", "Bookings"}, //Field name, not table name
 		Order:   []string{"created_at desc"},
@@ -35,7 +45,7 @@ func (bc *PropertyController) CountPropertyStatus(ctx context.Context, req *prot
 	statuses := util.ConvertEnumToSlice(*enum.PropertyStatus)
 
 	if req.Status != nil && *req.Status != "" {
-		status := enum.BookingStatusValue(*req.Status)
+		status := enum.PropertyStatusValue(*req.Status)
 		statuses = []string{string(status)}
 	}
 
@@ -81,10 +91,12 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 	amenities := util.ConvertSlice[*model.Amenity](req.Amenities)
 
 	property := &model.Property{
-		HostId:       req.HostId,
-		PropertyType: &propertyType,
-		Status:       &enum.PropertyStatus.InReview,
-		OverallRate:  req.OverallRate,
+		HostId:        req.HostId,
+		HostFirstName: req.HostFirstName,
+		HostLastName:  req.HostLastName,
+		PropertyType:  &propertyType,
+		Status:        &enum.PropertyStatus.InReview,
+		OverallRate:   req.OverallRate,
 
 		MaxGuests:    req.MaxGuests,
 		MaxPets:      req.MaxPets,
@@ -100,6 +112,7 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 		Title: req.Title,
 		Body:  req.Body,
 
+		Address:    req.Address,
 		NationCode: req.NationCode,
 		CityCode:   req.CityCode,
 		Lat:        req.Lat,
@@ -109,6 +122,16 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 		ServiceFee: req.ServiceFee,
 
 		Amenities: amenities,
+	}
+
+	if req.IntroCover != nil && *req.IntroCover != "" {
+		property.IntroCover = req.IntroCover
+	}
+
+	if len(req.IntroImages) > 0 {
+		encode, _ := json.Marshal(req.IntroImages)
+		introImages := string(encode)
+		property.IntroImages = &introImages
 	}
 
 	result := model.PropertyDB.Create(property)

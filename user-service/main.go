@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	config, _ := config.InitConfig("")
+	config, _ := config.InitConfig(".")
 	aws.ConnectAWS()
 	dbOrm := orm.ConnectDB()
 	app := sdk.App{

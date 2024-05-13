@@ -52,6 +52,10 @@ func (bc *PropertyController) GetAmenity(ctx context.Context, req *protoProperty
 		filter.ID = req.QueryFields.Id
 	}
 
+	if req.QueryFields.Name != "" {
+		filter.Name = req.QueryFields.Name
+	}
+
 	result := model.AmenityDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, nil)
 
 	return util.ConvertToGRPC(result)

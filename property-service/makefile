@@ -12,10 +12,9 @@ run:
 		*) echo "Not Found Option"; exit 1;; \
 	esac
 
-
 #Run service
 run-service:
-	nodemon --exec "go run" ./cmd/main.go --signal SIGTERM
+	nodemon --exec "go run" ./main.go --signal SIGTERM
 
 # GRPC
 gen-sdk:

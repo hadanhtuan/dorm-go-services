@@ -48,7 +48,7 @@ func (bc *PaymentController) CreatePaymentIntent(ctx context.Context, req *proto
 	_ = model.PaymentLogDB.Create(paymentLog)
 
 	return util.ConvertToGRPC(&common.APIResponse{
-		Status:  common.APIStatus.Ok,
+		Status:  common.APIStatus.Created,
 		Message: "Create payment intent successfully",
 		Data:    pi.ClientSecret,
 	})

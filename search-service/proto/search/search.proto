@@ -37,6 +37,8 @@ message MsgProperty {
   optional string id = 1;
 
   optional string hostId = 2;
+  optional string hostFirstName = 44;
+  optional string hostLastName = 42;
   optional string propertyType = 3;
   optional float overallRate = 4;
 
@@ -54,6 +56,7 @@ message MsgProperty {
   optional string title = 14;
   optional string body = 15;
 
+  optional string address = 41;
   optional string cityCode = 16;
   optional string nationCode = 17;
   optional string lat = 18;

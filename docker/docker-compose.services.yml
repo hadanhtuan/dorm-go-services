@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  payment-service:
+    depends_on:
+      - property-service
+    container_name: payment-service
+    restart: always
+    build:
+      dockerfile: ../payment-service/Dockerfile
+      context: ../payment-service
+    image: hiimtuan/payment-service
+    ports:
+      - '4003:4003'
+    volumes: 
+      - ../payment-service/.env:/go/src/app/.env
+    env_file: 
+      - ../payment-service/.env
+    networks:
+      - docker_gotrek
+
+  property-service:
+    depends_on:
+      - user-service
+    container_name: property-service
+    restart: always
+    build:
+      dockerfile: ../property-service/Dockerfile
+      context: ../property-service
+    image: hiimtuan/property-service
+    ports:
+      - '4001:4001'
+    volumes: 
+      - ../property-service/.env:/go/src/app/.env
+    env_file: 
+      - ../property-service/.env
+    networks:
+      - docker_gotrek
+
+  search-service:
+    container_name: search-service
+    restart: always
+    build:
+      dockerfile: ../search-service/Dockerfile
+      context: ../search-service
+    image: hiimtuan/search-service
+    ports:
+      - '4002:4002'
+    volumes: 
+      - ../search-service/.env:/go/src/app/.env
+    env_file: 
+      - ../search-service/.env
+    networks:
+      - docker_gotrek
+
+  user-service:
+    container_name: user-service
+    restart: always
+    build:
+      dockerfile: ../user-service/Dockerfile
+      context: ../user-service
+    image: hiimtuan/user-service
+    ports:
+      - '4000:4000'
+    volumes: 
+      - ../user-service/.env:/go/src/app/.env
+    env_file: 
+      - ../user-service/.env
+    networks:
+      - docker_gotrek
+
+networks:
+  docker_gotrek:
+    external: true
