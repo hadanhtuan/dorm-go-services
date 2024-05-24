@@ -30,6 +30,11 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 		filter.Status = &status
 	}
 
+	if req.QueryFields.PropertyType != "" {
+		propertyType := enum.PropertyTypeValue(req.QueryFields.PropertyType)
+		filter.PropertyType = &propertyType
+	}
+
 	result := model.PropertyDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
 		Preload: []string{"Reviews", "Amenities", "Bookings"}, //Field name, not table name
 		Order:   []string{"created_at desc"},
@@ -91,12 +96,11 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 	amenities := util.ConvertSlice[*model.Amenity](req.Amenities)
 
 	property := &model.Property{
-		HostId:        req.HostId,
-		HostFirstName: req.HostFirstName,
-		HostLastName:  req.HostLastName,
-		PropertyType:  &propertyType,
-		Status:        &enum.PropertyStatus.InReview,
-		OverallRate:   req.OverallRate,
+		HostId:       req.HostId,
+		HostName:     req.HostName,
+		PropertyType: &propertyType,
+		Status:       &enum.PropertyStatus.InReview,
+		OverallRate:  req.OverallRate,
 
 		MaxGuests:    req.MaxGuests,
 		MaxPets:      req.MaxPets,
@@ -201,3 +205,60 @@ func (bc *PropertyController) DeleteProperty(ctx context.Context, req *protoProp
 	result := model.PropertyDB.Delete(property)
 	return util.ConvertToGRPC(result)
 }
+
+// func (bc *PropertyController) MapMockData(limit int32, offset int32) {
+// 	result := model.MockPropertyDB.Query(nil, offset, limit, nil)
+// 	data := result.Data.([]*model.MockProperty)
+
+// 	for _, item := range data {
+// 		propertyType := enum.PropertyTypeValue(item.PropertyType)
+// 		f := false
+// 		t := true
+// 		lat := fmt.Sprintf("%f", item.Latitude)
+// 		long := fmt.Sprintf("%f", item.Longitude)
+// 		isInstantBook := true
+// 		if item.InstantBookable == "f" {
+// 			isInstantBook = false
+// 		}
+
+// 		trimString := strings.TrimPrefix(item.Price, "$")
+// 		nightPrice, _ := strconv.ParseFloat(trimString, 64)
+
+// 		property := &model.Property{
+// 			HostId:        string(item.HostId),
+// 			HostFirstName: item.HostName,
+// 			HostLastName:  item.HostName,
+// 			HostUrl:       item.HostUrl,
+// 			PropertyType:  &propertyType,
+// 			Status:        &enum.PropertyStatus.InReview,
+// 			// OverallRate:   item.OverallRate,
+
+// 			MaxGuests:    int32(item.Accommodates),
+// 			MaxPets:      2,
+// 			NumBeds:      int32(item.Beds),
+// 			NumBedrooms:  int32(item.Bedrooms),
+// 			NumBathrooms: int32(item.Bathrooms),
+
+// 			IsGuestFavor:  &f,
+// 			IsAllowPet:    &t,
+// 			IsSelfCheckIn: &t,
+// 			IsInstantBook: &isInstantBook,
+
+// 			Title: item.Name,
+// 			Body:  item.Description,
+
+// 			Address: &item.HostLocation,
+// 			// NationCode: item.NationCode,
+// 			// CityCode:   item.CityCode,
+// 			Lat:  &lat,
+// 			Long: &long,
+
+// 			NightPrice: nightPrice,
+// 			ServiceFee: 15,
+
+// 			// Amenities: amenities,
+
+// 			IntroCover: &item.PictureUrl,
+// 		}
+// 	}
+// }

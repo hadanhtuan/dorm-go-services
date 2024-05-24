@@ -27,15 +27,10 @@ type PropertyTypeEnt struct {
 	Camping     PropertyTypeValue
 	BeachFront  PropertyTypeValue
 	Lake        PropertyTypeValue
-	Mountain    PropertyTypeValue
 	Farm        PropertyTypeValue
 	Design      PropertyTypeValue
-	Ryokans     PropertyTypeValue
 	Mansion     PropertyTypeValue
 	Island      PropertyTypeValue
-	Arctic      PropertyTypeValue
-	Golfing     PropertyTypeValue
-	Windmills   PropertyTypeValue
 }
 
 var PropertyType = &PropertyTypeEnt{
@@ -49,15 +44,10 @@ var PropertyType = &PropertyTypeEnt{
 	Camping:     "CAMPING",
 	BeachFront:  "BEACH_FRONT",
 	Lake:        "LAKE",
-	Mountain:    "MOUNTAIN",
 	Farm:        "FARM",
 	Design:      "DESIGN",
-	Ryokans:     "RYOKANS",
-	Mansion:     "Mansion",
+	Mansion:     "MANSION",
 	Island:      "ISLAND",
-	Arctic:      "ARCTIC",
-	Golfing:     "GOLFING",
-	Windmills:   "WINDMILLS",
 }
 
 type PropertyStatusValue string

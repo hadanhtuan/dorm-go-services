@@ -1,17 +1,5 @@
 version: "3.9"
 services:
-  cache:
-    container_name: redis_cache
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - ${CACHE_PORT}:6379
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${CACHE_PWD}
-    volumes:
-      - cache:/data
-    networks:
-      - docker_gotrek
-
   postgres:
     container_name: postgres
     restart: always

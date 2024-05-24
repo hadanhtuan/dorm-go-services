@@ -50,8 +50,7 @@ message MsgProperty {
   optional string id = 1;
 
   string hostId = 2;
-  string hostFirstName = 44;
-  string hostLastName = 42;
+  string hostName = 44;
   string propertyType = 3;
   float overallRate = 4;
 

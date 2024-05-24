@@ -1,14 +1,14 @@
 package model
 
 import (
-	"time"
-	"user-service/internal/model/enum"
 	"github.com/hadanhtuan/go-sdk/db/orm"
 	"gorm.io/gorm"
+	"time"
+	"user-service/internal/model/enum"
 )
 
 type User struct {
-	ID        string     `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
+	ID        string     `json:"id" gorm:"default:gen_random_uuid()"`
 	CreatedAt time.Time  `json:"createdAt,omitempty"`
 	UpdatedAt time.Time  `json:"updatedAt,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" gorm:"index"`
@@ -24,7 +24,8 @@ type User struct {
 	Email     string `json:"email,omitempty" gorm:"column:email"`
 	Phone     string `json:"phone,omitempty" gorm:"column:phone"`
 	Password  string `json:"password,omitempty" gorm:"column:password"`
-	Address  string `json:"address,omitempty" gorm:"column:address"`
+	Avatar    string `json:"avatar,omitempty" gorm:"column:avatar"`
+	Address   string `json:"address,omitempty" gorm:"column:address"`
 	Gender    string `json:"gender,omitempty" gorm:"column:gender"`
 	DoB       int64  `json:"dob,omitempty" gorm:"column:dob"`
 	IsActive  *bool  `json:"isActive,omitempty" gorm:"column:is_active"`
