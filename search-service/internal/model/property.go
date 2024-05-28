@@ -14,6 +14,7 @@ type Property struct {
 	//has many
 	Reviews   []*Review   `json:"reviews,omitempty" gorm:"foreignKey:property_id"`
 	Bookings  []*Booking  `json:"bookings,omitempty" gorm:"foreignKey:property_id"`
+	Favorites []*Favorite `json:"favorites,omitempty" gorm:"foreignKey:property_id"`
 
 	//many2many
 	Amenities []*Amenity `json:"amenities,omitempty" gorm:"many2many:property_amenity;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -21,16 +22,17 @@ type Property struct {
 	//foreign key
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
 
-	HostFirstName string `json:"hostFirstName,omitempty" gorm:"column:host_first_name"`
-	HostLastName  string `json:"hostLastName,omitempty" gorm:"column:host_last_name"`
+	HostName   string `json:"hostName,omitempty" gorm:"column:host_name"`
+	HostAvatar string `json:"hostUrl,omitempty" gorm:"column:host_avatar"`
 
 	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
 
 	OverallRate float32 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
 
+	MaxNights    int32 `json:"maxNights,omitempty" gorm:"column:max_nights"`
 	MaxGuests    int32 `json:"maxGuests,omitempty" gorm:"column:max_guests"`
-	MaxPets      int32 `json:"maxPets,omitempty" gorm:"column:max_Pets"`
+	MaxPets      int32 `json:"maxPets,omitempty" gorm:"column:max_pets"`
 	NumBeds      int32 `json:"numBeds,omitempty" gorm:"column:num_beds"`
 	NumBedrooms  int32 `json:"numBedrooms,omitempty" gorm:"column:num_bedrooms"`
 	NumBathrooms int32 `json:"numBathrooms,omitempty" gorm:"column:num_bathrooms"`
@@ -40,9 +42,11 @@ type Property struct {
 	IsAllowPet    *bool `json:"isAllowPet,omitempty" gorm:"column:is_allow_pet"`
 	IsSelfCheckIn *bool `json:"isSelfCheckIn,omitempty" gorm:"column:is_self_check_in"`
 	IsInstantBook *bool `json:"isInstantBook,omitempty" gorm:"column:is_instant_book"`
+	IsFreeNext30  *bool `json:"isFreeNext30,omitempty" gorm:"column:is_free_next30"`
 
-	Title string `json:"title,omitempty" gorm:"column:title"`
-	Body  string `json:"body,omitempty" gorm:"column:body"`
+	Title        string `json:"title,omitempty" gorm:"column:title"`
+	Body         string `json:"body,omitempty" gorm:"column:body"`
+	Neighborhood string `json:"neighborhood,omitempty" gorm:"column:neighborhood"`
 
 	Address    *string `json:"address,omitempty" gorm:"column:address"`
 	CityCode   *string `json:"cityCode,omitempty" gorm:"column:city_code"`
@@ -62,5 +66,4 @@ type Property struct {
 
 	OtherCover  *string `json:"otherCover,omitempty" gorm:"column:other_cover"`
 	OtherImages *string `json:"otherImages,omitempty" gorm:"column:other_images;default:'[]'"`
-	
 }

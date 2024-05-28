@@ -58,31 +58,13 @@ var PropertyIndexCnf = &create.Request{
 					},
 				},
 			},
-			"bookings": types.NestedProperty{
-				Type: "nested",
-				Properties: map[string]types.Property{
-					"id": types.KeywordProperty{
-						Type: "keyword",
-					},
-					"checkInDate": types.IntegerNumberProperty{
-						Type: "integer",
-					},
-					"checkoutDate": types.IntegerNumberProperty{
-						Type: "integer",
-					},
-					"status": types.KeywordProperty{
-						Type:       "keyword",
-						Normalizer: &customNormalizer,
-					},
-				},
-			},
 			"hostId": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"hostFirstName": types.KeywordProperty{
+			"hostName": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"hostLastName": types.KeywordProperty{
+			"hostAvatar": types.KeywordProperty{
 				Type: "keyword",
 			},
 			"propertyType": types.KeywordProperty{
@@ -124,6 +106,9 @@ var PropertyIndexCnf = &create.Request{
 			"isInstantBook": types.BooleanProperty{
 				Type: "boolean",
 			},
+			"isFreeNext30": types.BooleanProperty{
+				Type: "boolean",
+			},
 			"title": types.TextProperty{
 				Type:     "text",
 				Analyzer: &customAnalyzer,
@@ -133,6 +118,9 @@ var PropertyIndexCnf = &create.Request{
 				Analyzer: &customAnalyzer,
 			},
 			"address": types.KeywordProperty{
+				Type: "keyword",
+			},
+			"neighborhood": types.KeywordProperty{
 				Type: "keyword",
 			},
 			"cityCode": types.KeywordProperty{
