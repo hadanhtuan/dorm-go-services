@@ -14,12 +14,12 @@ var (
 	CacheSearchTracking = "search:tracking" //search and save trend word
 
 	PropertyIndex = "property_index"
-	CityIndex     = "city_index"
+	TrackingIndex = "tracking_index"
 )
 
 var IndicesMap = map[string]*create.Request{
 	PropertyIndex: PropertyIndexCnf,
-	CityIndex:     CityIndexCnf,
+	TrackingIndex: TrackingIndexCnf,
 }
 
 var PropertyIndexCnf = &create.Request{
@@ -163,7 +163,7 @@ var PropertyIndexCnf = &create.Request{
 	},
 }
 
-var CityIndexCnf = &create.Request{
+var TrackingIndexCnf = &create.Request{
 	Settings: &types.IndexSettings{
 		Analysis: &types.IndexSettingsAnalysis{
 			Normalizer: map[string]types.Normalizer{
@@ -175,7 +175,7 @@ var CityIndexCnf = &create.Request{
 	},
 	Mappings: &types.TypeMapping{
 		Properties: map[string]types.Property{
-			"cityCode": types.KeywordProperty{
+			"title": types.KeywordProperty{
 				Type:       "keyword",
 				Normalizer: &customNormalizer,
 			},

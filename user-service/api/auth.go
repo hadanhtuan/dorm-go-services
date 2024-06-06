@@ -73,11 +73,10 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgUser) 
 
 	hashPassword, _ := sdk.HashPassword(req.Password)
 	user := &model.User{
-		Email:     req.Email,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Role:      &enum.UserRole.User,
-		Password:  hashPassword,
+		Email:    req.Email,
+		Username: req.Username,
+		Role:     &enum.UserRole.User,
+		Password: hashPassword,
 	}
 
 	result := model.UserDB.Create(user)

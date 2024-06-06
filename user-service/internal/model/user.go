@@ -19,8 +19,8 @@ type User struct {
 	Role *enum.UserRoleValue `json:"role,omitempty" gorm:"column:role"`
 
 	Username  string `json:"username,omitempty" gorm:"column:username"`
-	FirstName string `json:"firstName,omitempty" gorm:"column:first_name"`
-	LastName  string `json:"lastName,omitempty" gorm:"column:last_name"`
+	// FirstName string `json:"firstName,omitempty" gorm:"column:first_name"`
+	// LastName  string `json:"lastName,omitempty" gorm:"column:last_name"`
 	Email     string `json:"email,omitempty" gorm:"column:email"`
 	Phone     string `json:"phone,omitempty" gorm:"column:phone"`
 	Password  string `json:"password,omitempty" gorm:"column:password"`

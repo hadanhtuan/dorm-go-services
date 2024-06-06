@@ -186,7 +186,7 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 			MultiMatch: &types.MultiMatchQuery{
 				Query: *queryField.Title,
 				Fields: []string{
-					"title^1",
+					"title^2",
 					"body",
 				},
 				Fuzziness: "AUTO",
