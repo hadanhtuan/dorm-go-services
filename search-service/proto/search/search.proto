@@ -7,9 +7,10 @@ import "proto/sdk/sdk.proto";
 option go_package = "search-service/proto/search";
 
 service searchService {
-  rpc suggestTitle(MsgSuggestion) returns (sdk.BaseResponse);
+  rpc RenderSuggestion(MsgSuggestion) returns (sdk.BaseResponse);
   rpc searchTitlePrefix(MsgSuggestion) returns (sdk.BaseResponse);
 
+  rpc getNation(MsgIP) returns (sdk.BaseResponse);
   //main search
   rpc searchProperty(MsgSearchProperty) returns (sdk.BaseResponse);
 }
@@ -63,6 +64,9 @@ message MsgProperty {
   optional double nightPriceMax = 22;
 
   repeated MsgAmenity amenities = 23;
+
+  optional string userId = 27;
+
 }
 
 message MsgAmenity{

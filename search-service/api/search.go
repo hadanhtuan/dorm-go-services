@@ -10,6 +10,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/hadanhtuan/go-sdk/common"
 	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
 	"github.com/ipinfo/go/v2/ipinfo"
 )
@@ -182,6 +183,8 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	if queryField.Title != nil {
+		// go sc.SaveSearchRecord(*queryField.Title, *queryField.UserId)
+
 		shouldQuery = append(shouldQuery, types.Query{
 			MultiMatch: &types.MultiMatchQuery{
 				Query: *queryField.Title,
@@ -208,6 +211,70 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 
 	result := es.Search[model.Property](util.PropertyIndex, query)
 
+	return util.ConvertToGRPC(result)
+}
+
+func (sc *SearchController) GetNation(ctx context.Context, req *protoSearch.MsgIP) (*protoSdk.BaseResponse, error) {
+	type CountNation struct {
+		Nation   string `json:"nation,omitempty"`
+		Quantity *int64 `json:"quantity,omitempty"`
+	}
+
+	size := 0
+	field := "nationCode.keyword"
+
+	aggQuery := map[string]types.Aggregations{
+		"count_distinct": {
+			Terms: &types.TermsAggregation{
+				Field: &field,
+			},
+		},
+	}
+
+	query := &search.Request{
+		Size:         &size,
+		Sort:         []types.SortCombinations{},
+		Aggregations: aggQuery,
+	}
+
+	conn := es.GetConnection()
+
+	res, err := conn.Client.Search().Index(util.PropertyIndex).Request(query).Do(context.Background())
+
+	if err != nil {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Total:   0,
+			Message: "Error query index " + util.PropertyIndex + ". Error detail: " + err.Error(),
+			Status:  common.APIStatus.BadRequest,
+		})
+	}
+
+	data := res.Aggregations["count_distinct"].(*types.StringTermsAggregate)
+	bucket := data.Buckets.([]types.StringTermsBucket)
+
+	nations := []string{}
+
+	for _, v := range bucket {
+		nations = append(nations, v.Key.(string))
+	}
+
+	return util.ConvertToGRPC(&common.APIResponse{
+		Data:   nations,
+		Status: common.APIStatus.Ok,
+	})
+}
+
+func (sc *SearchController) RenderSuggestion(ctx context.Context, req *protoSearch.MsgSuggestion) (*protoSdk.BaseResponse, error) {
+	size := int(req.Paginate.Limit)
+	from := (int(req.Paginate.Offset) - 1) * size
+
+	query := &search.Request{
+		Size: &size,
+		From: &from,
+		Sort: []types.SortCombinations{},
+	}
+
+	result := es.Search[model.Property](util.PropertyIndex, query)
 	return util.ConvertToGRPC(result)
 }
 

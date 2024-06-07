@@ -15,6 +15,8 @@ var (
 
 	PropertyIndex = "property_index"
 	TrackingIndex = "tracking_index"
+
+	MaxSuggestion = 4
 )
 
 var IndicesMap = map[string]*create.Request{
@@ -175,7 +177,7 @@ var TrackingIndexCnf = &create.Request{
 	},
 	Mappings: &types.TypeMapping{
 		Properties: map[string]types.Property{
-			"title": types.KeywordProperty{
+			"searchText": types.KeywordProperty{
 				Type:       "keyword",
 				Normalizer: &customNormalizer,
 			},
