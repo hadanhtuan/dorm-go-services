@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"search-service/internal/model"
 	"search-service/internal/util"
@@ -25,6 +26,8 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	size := int(req.Paginate.Limit)
 	from := (int(req.Paginate.Offset) - 1) * size
 
+	fmt.Println("what the fuck", size)
+
 	queryField := req.QueryFields
 
 	mustQuery := []types.Query{}
@@ -35,21 +38,28 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 		ignoreUnmapped := true
 
 		for _, amenity := range queryField.Amenities {
+			fmt.Println(*amenity.Id)
 			amenityQuery = append(amenityQuery, types.Query{
 				Nested: &types.NestedQuery{
 					Path:           "amenities",
 					IgnoreUnmapped: &ignoreUnmapped,
 					Query: &types.Query{
-						Term: map[string]types.TermQuery{
-							"amenities.id": {
-								Value: *amenity.Id,
+						Bool: &types.BoolQuery{
+							Must: []types.Query{
+								{
+									Term: map[string]types.TermQuery{
+										"amenities.id": {
+											Value: *amenity.Id,
+										},
+									},
+								},
 							},
 						},
 					},
 				},
 			})
 		}
-		shouldQuery = append(shouldQuery, amenityQuery...)
+		mustQuery = append(mustQuery, amenityQuery...)
 	}
 
 	if queryField.NightPriceMin != nil && queryField.NightPriceMax != nil {
@@ -211,17 +221,14 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 
 	result := es.Search[model.Property](util.PropertyIndex, query)
 
+	fmt.Println("result", result.Total)
+
 	return util.ConvertToGRPC(result)
 }
 
 func (sc *SearchController) GetNation(ctx context.Context, req *protoSearch.MsgIP) (*protoSdk.BaseResponse, error) {
-	type CountNation struct {
-		Nation   string `json:"nation,omitempty"`
-		Quantity *int64 `json:"quantity,omitempty"`
-	}
-
 	size := 0
-	field := "nationCode.keyword"
+	field := "nationCode"
 
 	aggQuery := map[string]types.Aggregations{
 		"count_distinct": {

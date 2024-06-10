@@ -41,11 +41,11 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 	})
 
 	result.Message = "Get properties successfully"
-	// data := result.Data.([]*model.Property)
+	data := result.Data.([]*model.Property)
 
-	// for _, item := range data {
-	// 	go bc.SyncProperty(item)
-	// }
+	for _, item := range data {
+		go bc.SyncProperty(item)
+	}
 	return util.ConvertToGRPC(result)
 }
 
