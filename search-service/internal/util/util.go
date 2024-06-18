@@ -8,12 +8,15 @@ import (
 )
 
 var (
-	SEARCH_EXCHANGE   = "searchExchange"
-	SEARCH_QUEUE      = "searchQueue"
+	SEARCH_EXCHANGE = "searchExchange"
+	SEARCH_QUEUE    = "searchQueue"
 
 	// ROUTING KEY
 	PropertyCreated = "property.created"
 	PropertyUpdated = "property.updated"
+
+	Desc = "desc"
+	Asc  = "asc"
 )
 
 func ConvertToGRPC(sdkResult *common.APIResponse) (*protoSdk.BaseResponse, error) {

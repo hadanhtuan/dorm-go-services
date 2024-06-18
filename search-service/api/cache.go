@@ -14,12 +14,12 @@ import (
 	cache "github.com/hadanhtuan/go-sdk/db/redis"
 )
 
-func (sc *SearchController) SaveSearchRecord(searchText, userId string) {
+func (sc *SearchController) SaveSearchRecord(searchText string, userId *string) {
 	documentId := strings.Trim(searchText, " ")
 	documentId = strings.ReplaceAll(documentId, " ", "_")
 
-	if userId != "" {
-		key := fmt.Sprintf("%s:%s", util.CacheSearchTracking, userId) // key = search:tracking:user1
+	if userId != nil && *userId != "" {
+		key := fmt.Sprintf("%s:%s", util.CacheSearchTracking, *userId) // key = search:tracking:user1
 		go sc.CacheRecently(searchText, key)                          // save to redis
 	}
 
@@ -45,6 +45,21 @@ func (sc *SearchController) CacheRecently(searchText, key string) {
 
 	cache.Set(key, recently, 10*24*time.Hour)
 }
+
+func (sc *SearchController) GetRecent(userId *string, size int) []string {
+	recently := []string{}
+	if userId != nil && *userId != "" {
+		prefix := fmt.Sprintf("%s:%s", util.CacheSearchTracking, *userId)
+		cache.Get(prefix, &recently)
+
+		if len(recently) > size {
+			recently = recently[:size]
+		}
+	}
+
+	return recently
+}
+
 
 func (sc *SearchController) UpsertSearchDocument(documentId string, document *model.SearchTrackingDocument) {
 	script := `ctx._source.searchCount = ctx._source.searchCount != null ? ctx._source.searchCount += 1 : 1`

@@ -8,9 +8,11 @@ import (
 	"search-service/internal/util"
 	protoSdk "search-service/proto/sdk"
 	protoSearch "search-service/proto/search"
-
+	"strings"
+	"sync"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
 	"github.com/hadanhtuan/go-sdk/common"
 	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
 	"github.com/ipinfo/go/v2/ipinfo"
@@ -25,8 +27,6 @@ func (sc *SearchController) InitIndex() {
 func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch.MsgSearchProperty) (*protoSdk.BaseResponse, error) {
 	size := int(req.Paginate.Limit)
 	from := (int(req.Paginate.Offset) - 1) * size
-
-	fmt.Println("what the fuck", size)
 
 	queryField := req.QueryFields
 
@@ -193,7 +193,7 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	if queryField.Title != nil {
-		// go sc.SaveSearchRecord(*queryField.Title, *queryField.UserId)
+		go sc.SaveSearchRecord(*queryField.Title, queryField.UserId)
 
 		shouldQuery = append(shouldQuery, types.Query{
 			MultiMatch: &types.MultiMatchQuery{
@@ -220,8 +220,6 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	result := es.Search[model.Property](util.PropertyIndex, query)
-
-	fmt.Println("result", result.Total)
 
 	return util.ConvertToGRPC(result)
 }
@@ -272,54 +270,133 @@ func (sc *SearchController) GetNation(ctx context.Context, req *protoSearch.MsgI
 }
 
 func (sc *SearchController) RenderSuggestion(ctx context.Context, req *protoSearch.MsgSuggestion) (*protoSdk.BaseResponse, error) {
-	size := int(req.Paginate.Limit)
-	from := (int(req.Paginate.Offset) - 1) * size
+	var wg sync.WaitGroup
 
-	query := &search.Request{
-		Size: &size,
-		From: &from,
-		Sort: []types.SortCombinations{},
+	type SuggestionResponse struct {
+		Popular  []string `json:"popular"`
+		Recently []string `json:"recently"`
 	}
 
-	result := es.Search[model.Property](util.PropertyIndex, query)
-	return util.ConvertToGRPC(result)
-}
+	popular := []string(nil)
+	recently := []string(nil)
 
-func (sc *SearchController) ListPropertyByIP(ctx context.Context, req *protoSearch.MsgIP) (*protoSdk.BaseResponse, error) {
 	size := int(req.Paginate.Limit)
 	from := (int(req.Paginate.Offset) - 1) * size
 
-	mustQuery := []types.Query{}
+	wg.Add(2)
 
-	// countryCode, err := sc.GetCountryByIp(req.IpAddress)
-	// fmt.Println(countryCode)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		popular, _ = sc.GetPopular(&from, &size)
+	}(&wg)
 
-	// if err != nil {
-	// 	return util.ConvertToGRPC(&common.APIResponse{
-	// 		Status:  common.APIStatus.BadRequest,
-	// 		Message: "Error parsing country. Error detail: " + err.Error(),
-	// 	})
-	// }
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		recently = sc.GetRecent(req.UserId, size)
+	}(&wg)
 
-	mustQuery = append(mustQuery, types.Query{
-		Match: map[string]types.MatchQuery{
-			"nationCode": {Query: "USA"},
-		},
+	wg.Wait()
+
+	res := SuggestionResponse{
+		Popular:  popular,
+		Recently: recently,
+	}
+
+	return util.ConvertToGRPC(&common.APIResponse{
+		Data:   res,
+		Status: common.APIStatus.Ok,
 	})
+
+}
+
+func (sc *SearchController) SearchTitlePrefix(ctx context.Context, req *protoSearch.MessageSearchPrefix) (*protoSdk.BaseResponse, error) {
+
+	size := int(req.Paginate.Limit)
+	from := (int(req.Paginate.Offset) - 1) * size
 
 	query := &search.Request{
 		From: &from,
 		Size: &size,
-		Sort: []types.SortCombinations{},
+		Sort: []types.SortCombinations{
+			types.SortOptions{
+				SortOptions: map[string]types.FieldSort{
+					"searchCount": {
+						Order: &sortorder.SortOrder{
+							Name: util.Desc,
+						},
+					},
+				},
+			},
+		},
 		Query: &types.Query{
-			Bool: &types.BoolQuery{
-				Must: mustQuery,
+			Prefix: map[string]types.PrefixQuery{
+				"searchText": {
+					Value: req.SearchText,
+				},
+			},
+		},
+		Highlight: &types.Highlight{
+			Fields: map[string]types.HighlightField{
+				"searchText": {},
+			},
+		},
+	}
+	result := es.Search[model.SearchTrackingDocument](
+		util.TrackingIndex,
+		query,
+	)
+
+	if result.Status != common.APIStatus.Ok {
+		return util.ConvertToGRPC(result)
+	}
+
+	data := result.Data.([]model.SearchTrackingDocument)
+
+	for i := 0; i < len(data); i++ {
+		key := strings.ReplaceAll(strings.Trim(data[i].SearchText, " "), " ", "_")
+		data[i].Highlight = result.Headers[key]
+	}
+
+	return util.ConvertToGRPC(&common.APIResponse{
+		Status: common.APIStatus.Ok,
+		Data:   data,
+	})
+}
+
+func (sc *SearchController) GetPopular(from, size *int) ([]string, error) {
+	query := &search.Request{
+		From: from,
+		Size: size,
+		Sort: []types.SortCombinations{
+			types.SortOptions{
+				SortOptions: map[string]types.FieldSort{
+					"searchCount": {
+						Order: &sortorder.SortOrder{
+							Name: util.Desc,
+						},
+					},
+				},
 			},
 		},
 	}
 
-	result := es.Search[model.Property](util.PropertyIndex, query)
-	return util.ConvertToGRPC(result)
+	result := es.Search[model.SearchTrackingDocument](
+		util.TrackingIndex,
+		query,
+	)
+
+	if result.Status != common.APIStatus.Ok {
+		return nil, fmt.Errorf(result.Message)
+	}
+
+	data := result.Data.([]model.SearchTrackingDocument)
+
+	popularly := []string(nil)
+	for _, record := range data {
+		popularly = append(popularly, record.SearchText)
+	}
+
+	return popularly, nil
 }
 
 func (sc *SearchController) GetCountryByIp(ip string) (string, error) {
