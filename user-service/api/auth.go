@@ -230,6 +230,10 @@ func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryU
 		filter.Email = queryField.Email
 	}
 
+	if queryField.Username != "" {
+		filter.Username = queryField.Username
+	}
+
 	if queryField.Gender != "" {
 		filter.Gender = queryField.Gender
 	}

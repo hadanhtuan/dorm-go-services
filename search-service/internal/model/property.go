@@ -23,7 +23,7 @@ type Property struct {
 	HostId string `json:"hostId,omitempty" gorm:"column:host_id"`
 
 	HostName   string `json:"hostName,omitempty" gorm:"column:host_name"`
-	HostAvatar string `json:"hostUrl,omitempty" gorm:"column:host_avatar"`
+	HostAvatar string `json:"hostAvatar,omitempty" gorm:"column:host_avatar"`
 
 	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`

@@ -26,7 +26,6 @@ type SearchServiceClient interface {
 	RenderSuggestion(ctx context.Context, in *MsgSuggestion, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	SearchTitlePrefix(ctx context.Context, in *MessageSearchPrefix, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	GetNation(ctx context.Context, in *MsgIP, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
-	// main search
 	SearchProperty(ctx context.Context, in *MsgSearchProperty, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 }
 
@@ -81,7 +80,6 @@ type SearchServiceServer interface {
 	RenderSuggestion(context.Context, *MsgSuggestion) (*sdk.BaseResponse, error)
 	SearchTitlePrefix(context.Context, *MessageSearchPrefix) (*sdk.BaseResponse, error)
 	GetNation(context.Context, *MsgIP) (*sdk.BaseResponse, error)
-	// main search
 	SearchProperty(context.Context, *MsgSearchProperty) (*sdk.BaseResponse, error)
 	mustEmbedUnimplementedSearchServiceServer()
 }

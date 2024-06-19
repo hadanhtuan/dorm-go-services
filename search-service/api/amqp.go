@@ -40,7 +40,8 @@ func (ps *SearchController) EventPropertyUpdated(payload []byte) {
 	var property model.Property
 
 	json.Unmarshal(payload, &property)
-	fmt.Println(property.Amenities[0].Name)
+
+	fmt.Println(property.Status)
 
 	byteMerged, _ := json.Marshal(property)
 
