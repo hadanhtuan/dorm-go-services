@@ -41,11 +41,12 @@ func (ps *SearchController) EventPropertyUpdated(payload []byte) {
 
 	json.Unmarshal(payload, &property)
 
-	fmt.Println(property.Status)
+	fmt.Println(property.ID)
+	fmt.Println(property.HostName)
 
-	byteMerged, _ := json.Marshal(property)
+	// byteMerged, _ := json.Marshal(property)
 
 	es.UpdateDocument(util.PropertyIndex, property.ID, &update.Request{
-		Doc: json.RawMessage(byteMerged),
+		Doc: json.RawMessage(payload),
 	})
 }

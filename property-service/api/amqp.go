@@ -44,7 +44,6 @@ func (pc *PropertyController) EventPaymentSuccess(payload []byte) {
 
 // Sync data to Search Service
 func (bc *PropertyController) SyncProperty(data *model.Property) {
-	fmt.Println(data.Status)
 	encodeData, _ := json.Marshal(data)
 	instant := amqp.GetConnection()
 	err := instant.PublishMessage(util.SEARCH_EXCHANGE, util.PropertyCreated, encodeData)
@@ -68,8 +67,10 @@ func (bc *PropertyController) SyncUpdateProperty(id string) {
 	}
 
 	data := result.Data.([]*model.Property)[0]
-	fmt.Println(data)
-	encodeData, _ := json.Marshal(data)
+
+
+	fmt.Println(*data.Status)
+	encodeData, _ := json.Marshal(&data)
 
 	instant := amqp.GetConnection()
 	err := instant.PublishMessage(util.SEARCH_EXCHANGE, util.PropertyUpdated, encodeData)

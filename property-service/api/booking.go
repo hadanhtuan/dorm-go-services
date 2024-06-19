@@ -70,7 +70,14 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 		Status:              &enum.BookingStatus.WaitToCheck,
 	}
 
+	propertyUpdated := &model.Property{
+		Status: &enum.PropertyStatus.InBooking,
+	}   
+	model.PropertyDB.Update(property, propertyUpdated)
 	result = model.BookingDB.Create(booking)
+
+	bc.SyncUpdateProperty(property.ID)
+
 
 	return util.ConvertToGRPC(result)
 }

@@ -56,6 +56,7 @@ type Property struct {
 	NationCode *string `json:"nationCode,omitempty" gorm:"column:nation_code"`
 	Lat        *string `json:"lat,omitempty" gorm:"column:lat"`
 	Long       *string `json:"long,omitempty" gorm:"column:long"`
+	ZipCode    *string `json:"zipCode,omitempty" gorm:"column:zip_code"`
 
 	NightPrice float64 `json:"nightPrice,omitempty" gorm:"column:night_price"`
 	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`

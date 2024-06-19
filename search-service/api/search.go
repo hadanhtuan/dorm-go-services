@@ -3,12 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
-	"github.com/hadanhtuan/go-sdk/common"
-	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
-	"github.com/ipinfo/go/v2/ipinfo"
 	"net"
 	"search-service/internal/model"
 	"search-service/internal/util"
@@ -16,6 +10,13 @@ import (
 	protoSearch "search-service/proto/search"
 	"strings"
 	"sync"
+
+	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
+	"github.com/hadanhtuan/go-sdk/common"
+	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
+	"github.com/ipinfo/go/v2/ipinfo"
 )
 
 func (sc *SearchController) InitIndex() {
@@ -38,7 +39,6 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 		ignoreUnmapped := true
 
 		for _, amenity := range queryField.Amenities {
-			fmt.Println(*amenity.Id)
 			amenityQuery = append(amenityQuery, types.Query{
 				Nested: &types.NestedQuery{
 					Path:           "amenities",
@@ -193,7 +193,6 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	if queryField.Status != nil {
-		fmt.Println(*queryField.Status)
 		mustQuery = append(mustQuery, types.Query{
 			Match: map[string]types.MatchQuery{
 				"status": {Query: *queryField.Status},
