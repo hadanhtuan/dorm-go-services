@@ -54,6 +54,9 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	booking := &model.Booking{
 		PropertyId:          req.PropertyId,
 		UserId:              req.UserId,
+		Username:            req.UserName,
+		HostId:              property.HostId,
+		HostName:            property.HostName,
 		CheckInDate:         req.CheckInDate,
 		CheckoutDate:        req.CheckoutDate,
 		GuestNumber:         req.GuestNumber,
@@ -72,12 +75,11 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 
 	propertyUpdated := &model.Property{
 		Status: &enum.PropertyStatus.InBooking,
-	}   
+	}
 	model.PropertyDB.Update(property, propertyUpdated)
 	result = model.BookingDB.Create(booking)
 
 	bc.SyncUpdateProperty(property.ID)
-
 
 	return util.ConvertToGRPC(result)
 }

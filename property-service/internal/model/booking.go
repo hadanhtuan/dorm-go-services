@@ -18,6 +18,9 @@ type Booking struct {
 	PropertyId string    `json:"propertyId"  gorm:"column:property_id"`
 	Property   *Property `json:"property,omitempty"`
 	UserId     string    `json:"userId"  gorm:"column:user_id"`
+	Username   string    `json:"username"  gorm:"column:username"`
+	HostId    string    `json:"hostId"  gorm:"column:host_id"`
+	HostName   string    `json:"hostName"  gorm:"column:host_name"`
 
 	Status *enum.BookingStatusValue `json:"status,omitempty" gorm:"column:status"`
 

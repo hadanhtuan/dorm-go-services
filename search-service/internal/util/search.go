@@ -63,11 +63,12 @@ var PropertyIndexCnf = &create.Request{
 			"hostId": types.KeywordProperty{
 				Type: "keyword",
 			},
-			"hostName": types.KeywordProperty{
-				Type: "keyword",
+			"hostName": types.TextProperty{
+				Type: "text",
+				Analyzer: &customAnalyzer,
 			},
-			"hostAvatar": types.KeywordProperty{
-				Type: "keyword",
+			"hostAvatar": types.TextProperty{
+				Type: "text",
 			},
 			"propertyType": types.KeywordProperty{
 				Type: "keyword",

@@ -201,8 +201,8 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	}
 
 	if queryField.HostName != nil && *queryField.HostName != "" {
-		shouldQuery = append(shouldQuery, types.Query{
-			Match: map[string]types.MatchQuery{
+		mustQuery = append(mustQuery, types.Query{
+			MatchPhrasePrefix: map[string]types.MatchPhrasePrefixQuery{
 				"hostName": {Query: *queryField.HostName},
 			},
 		})
