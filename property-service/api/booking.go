@@ -50,6 +50,10 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	totalPriceBeforeTax := float64(req.NightNumber)*property.NightPrice + property.ServiceFee
 	taxFee := totalPriceBeforeTax * property.TaxPercent
 	totalPrice := totalPriceBeforeTax + taxFee
+	status :=  &enum.BookingStatus.WaitToCheck
+	if *property.IsInstantBook == true {
+		status =  &enum.BookingStatus.Success
+	}
 
 	booking := &model.Booking{
 		PropertyId:          req.PropertyId,
@@ -70,11 +74,13 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 		TotalPriceBeforeTax: totalPriceBeforeTax,
 		TotalPrice:          totalPrice,
 		TaxFee:              taxFee,
-		Status:              &enum.BookingStatus.WaitToCheck,
+		Status:              status,
 	}
 
 	propertyUpdated := &model.Property{
 		Status: &enum.PropertyStatus.InBooking,
+		NextCheckInDate: req.CheckInDate,
+		NextCheckoutDate: req.CheckoutDate,
 	}
 	model.PropertyDB.Update(property, propertyUpdated)
 	result = model.BookingDB.Create(booking)

@@ -36,10 +36,9 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 	}
 
 	result := model.PropertyDB.Query(filter, req.Paginate.Offset, req.Paginate.Limit, &orm.QueryOption{
-		Preload: []string{"Reviews", "Amenities", "Bookings"}, //Field name, not table name
+		Preload: []string{"Amenities", "Bookings"}, //Field name, not table name
 		Order:   []string{"created_at desc"},
 	})
-
 	result.Message = "Get properties successfully"
 	data := result.Data.([]*model.Property)
 

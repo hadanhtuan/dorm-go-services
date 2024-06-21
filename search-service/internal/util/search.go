@@ -82,6 +82,12 @@ var PropertyIndexCnf = &create.Request{
 			"maxGuests": types.IntegerNumberProperty{
 				Type: "integer",
 			},
+			"nextCheckInDate": types.IntegerNumberProperty{
+				Type: "integer",
+			},
+			"nextCheckoutDate": types.IntegerNumberProperty{
+				Type: "integer",
+			},
 			"maxPets": types.IntegerNumberProperty{
 				Type: "integer",
 			},

@@ -28,7 +28,9 @@ type Property struct {
 	PropertyType *enum.PropertyTypeValue   `json:"propertyType,omitempty" gorm:"column:property_type"`
 	Status       *enum.PropertyStatusValue `json:"status,omitempty" gorm:"column:status"`
 
-	OverallRate float32 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
+	OverallRate      float32 `json:"overallRate,omitempty" gorm:"column:overall_rate"`
+	NextCheckInDate  int64   `json:"nextCheckInDate,omitempty" gorm:"column:next_checkin_date"`
+	NextCheckoutDate int64   `json:"nextCheckoutDate,omitempty" gorm:"column:next_checkout_date"`
 
 	MaxNights    int32 `json:"maxNights,omitempty" gorm:"column:max_nights"`
 	MaxGuests    int32 `json:"maxGuests,omitempty" gorm:"column:max_guests"`
@@ -53,6 +55,7 @@ type Property struct {
 	NationCode *string `json:"nationCode,omitempty" gorm:"column:nation_code"`
 	Lat        *string `json:"lat,omitempty" gorm:"column:lat"`
 	Long       *string `json:"long,omitempty" gorm:"column:long"`
+	ZipCode    *string `json:"zipCode,omitempty" gorm:"column:zip_code"`
 
 	NightPrice float64 `json:"nightPrice,omitempty" gorm:"column:night_price"`
 	ServiceFee float64 `json:"serviceFee,omitempty" gorm:"column:service_fee"`
