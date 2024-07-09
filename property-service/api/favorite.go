@@ -8,7 +8,7 @@ import (
 	protoSdk "property-service/proto/sdk"
 )
 
-func (bc *PropertyController) CreateFavorite(ctx context.Context, req *protoProperty.MsgFavorite) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CreateFavorite(ctx context.Context, req *protoProperty.MsgFavorite) (*protoSdk.BaseResponse, error) {
 	favorite := &model.Favorite{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
@@ -19,7 +19,7 @@ func (bc *PropertyController) CreateFavorite(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) DeleteFavorite(ctx context.Context, req *protoProperty.MsgId) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) DeleteFavorite(ctx context.Context, req *protoProperty.MsgId) (*protoSdk.BaseResponse, error) {
 	favorite := &model.Favorite{
 		ID: req.Id,
 	}
@@ -28,7 +28,7 @@ func (bc *PropertyController) DeleteFavorite(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetFavorite(ctx context.Context, req *protoProperty.MsgQueryFavorite) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) GetFavorite(ctx context.Context, req *protoProperty.MsgQueryFavorite) (*protoSdk.BaseResponse, error) {
 	filter := &model.Favorite{}
 
 	if req.QueryFields.Id != "" {

@@ -14,7 +14,7 @@ import (
 	cache "github.com/hadanhtuan/go-sdk/db/redis"
 )
 
-func (sc *SearchController) SaveSearchRecord(searchText string, userId *string) {
+func (sc *SearchAPI) SaveSearchRecord(searchText string, userId *string) {
 	documentId := strings.Trim(searchText, " ")
 	documentId = strings.ReplaceAll(documentId, " ", "_")
 
@@ -31,7 +31,7 @@ func (sc *SearchController) SaveSearchRecord(searchText string, userId *string) 
 	sc.UpsertSearchDocument(documentId, document) // update tracking index
 }
 
-func (sc *SearchController) CacheRecently(searchText, key string) {
+func (sc *SearchAPI) CacheRecently(searchText, key string) {
 	recently := []string{}
 
 	cache.Get(key, &recently)
@@ -46,7 +46,7 @@ func (sc *SearchController) CacheRecently(searchText, key string) {
 	cache.Set(key, recently, 10*24*time.Hour)
 }
 
-func (sc *SearchController) GetRecent(userId *string, size int) []string {
+func (sc *SearchAPI) GetRecent(userId *string, size int) []string {
 	recently := []string{}
 	if userId != nil && *userId != "" {
 		prefix := fmt.Sprintf("%s:%s", util.CacheSearchTracking, *userId)
@@ -61,7 +61,7 @@ func (sc *SearchController) GetRecent(userId *string, size int) []string {
 }
 
 
-func (sc *SearchController) UpsertSearchDocument(documentId string, document *model.SearchTrackingDocument) {
+func (sc *SearchAPI) UpsertSearchDocument(documentId string, document *model.SearchTrackingDocument) {
 	script := `ctx._source.searchCount = ctx._source.searchCount != null ? ctx._source.searchCount += 1 : 1`
 	dataDoc, _ := json.Marshal(document)
 

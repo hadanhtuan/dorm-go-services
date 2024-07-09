@@ -5,12 +5,21 @@ import (
 	"github.com/hadanhtuan/go-sdk"
 )
 
-type SearchController struct {
+type SearchAPI struct {
 	protoSearch.UnimplementedSearchServiceServer
 	App *sdk.App
 }
 
-func (pc *SearchController) InitController() {
-	pc.InitIndex()
-	pc.InitRoutingAMQP()
+func InitAPI(App *sdk.App) {
+	sa := &SearchAPI{
+		App: App,
+	}
+
+	sa.InitIndex()
+	sa.InitRoutingAMQP()
+	InstanceAPI = sa
 }
+
+var (
+	InstanceAPI *SearchAPI
+)

@@ -12,7 +12,7 @@ import (
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
-func (bc *PropertyController) CreateReview(ctx context.Context, req *protoProperty.MsgCreateReview) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CreateReview(ctx context.Context, req *protoProperty.MsgCreateReview) (*protoSdk.BaseResponse, error) {
 	review := &model.Review{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
@@ -39,7 +39,7 @@ func (bc *PropertyController) CreateReview(ctx context.Context, req *protoProper
 	})
 }
 
-func (bc *PropertyController) UpdateReview(ctx context.Context, req *protoProperty.MsgUpdateReview) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) UpdateReview(ctx context.Context, req *protoProperty.MsgUpdateReview) (*protoSdk.BaseResponse, error) {
 	review := &model.Review{
 		ID: req.ReviewId,
 	}
@@ -55,7 +55,7 @@ func (bc *PropertyController) UpdateReview(ctx context.Context, req *protoProper
 
 }
 
-func (bc *PropertyController) DeleteReview(ctx context.Context, req *protoProperty.MsgDeleteReview) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) DeleteReview(ctx context.Context, req *protoProperty.MsgDeleteReview) (*protoSdk.BaseResponse, error) {
 	review := &model.Review{
 		ID: req.ReviewId,
 	}
@@ -64,7 +64,7 @@ func (bc *PropertyController) DeleteReview(ctx context.Context, req *protoProper
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.MsgQueryReview) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) GetReview(ctx context.Context, req *protoProperty.MsgQueryReview) (*protoSdk.BaseResponse, error) {
 	filter := &model.Review{}
 
 	if req.QueryFields.PropertyId != nil && *req.QueryFields.PropertyId != "" {
@@ -83,7 +83,7 @@ func (bc *PropertyController) GetReview(ctx context.Context, req *protoProperty.
 	return util.ConvertToGRPC(mapResult)
 }
 
-func (bc *PropertyController) MapReviewWithUser(data []*model.Review) *common.APIResponse {
+func (bc *PropertyAPI) MapReviewWithUser(data []*model.Review) *common.APIResponse {
 	ids := []string{}
 	for _, review := range data {
 		ids = append(ids, review.UserId)

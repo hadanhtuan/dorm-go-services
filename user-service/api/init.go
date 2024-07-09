@@ -4,6 +4,18 @@ import (
 	protoUser "user-service/proto/user"
 )
 
-type UserController struct {
+type UserAPI struct {
 	protoUser.UnimplementedUserServiceServer
 }
+
+func InitAPI() {
+	ua := &UserAPI{
+	}
+
+	InstanceAPI = ua
+}
+
+
+var (
+	InstanceAPI *UserAPI
+)

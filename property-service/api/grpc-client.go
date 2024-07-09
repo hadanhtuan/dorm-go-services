@@ -11,7 +11,7 @@ import (
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
-func (pc *PropertyController) GetUsers(listIds []string) *common.APIResponse {
+func (pc *PropertyAPI) GetUsers(listIds []string) *common.APIResponse {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 

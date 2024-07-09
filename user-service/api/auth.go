@@ -15,7 +15,7 @@ import (
 	"github.com/hadanhtuan/go-sdk/common"
 )
 
-func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) Login(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	filter := &model.User{}
 
 	if req.Email == "" {
@@ -58,7 +58,7 @@ func (pc *UserController) Login(ctx context.Context, req *protoUser.MsgUser) (*p
 	})
 }
 
-func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) Register(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	filter := &model.User{}
 
 	filter.Email = req.Email
@@ -97,7 +97,7 @@ func (pc *UserController) Register(ctx context.Context, req *protoUser.MsgUser) 
 	})
 }
 
-func (pc *UserController) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	user := &model.User{}
 
 	if req.Email != "" {
@@ -123,7 +123,7 @@ func (pc *UserController) UpdateUser(ctx context.Context, req *protoUser.MsgUser
 
 }
 
-func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) RefreshToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
 	result := model.LoginSessionDB.QueryOne(&model.LoginSession{
 		RefreshToken: req.RefreshToken,
 	}, nil)
@@ -162,7 +162,7 @@ func (pc *UserController) RefreshToken(ctx context.Context, req *protoUser.MsgTo
 	})
 }
 
-func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) Logout(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 
 	filter := &model.LoginSession{
 		UserId:   req.Id,
@@ -177,7 +177,7 @@ func (pc *UserController) Logout(ctx context.Context, req *protoUser.MsgUser) (*
 	})
 }
 
-func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) VerifyToken(ctx context.Context, req *protoUser.MsgToken) (*protoSdk.BaseResponse, error) {
 	payload := common.JWTPayload{}
 
 	jwt.ParseWithClaims(req.AccessToken, &payload, nil)
@@ -210,7 +210,7 @@ func (pc *UserController) VerifyToken(ctx context.Context, req *protoUser.MsgTok
 	})
 }
 
-func (pc *UserController) GetProfile(ctx context.Context, req *protoUser.MsgID) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) GetProfile(ctx context.Context, req *protoUser.MsgID) (*protoSdk.BaseResponse, error) {
 	filter := map[string]interface{}{}
 	filter["id"] = req.Id
 
@@ -218,7 +218,7 @@ func (pc *UserController) GetProfile(ctx context.Context, req *protoUser.MsgID) 
 	return util.ConvertToGRPC(result)
 }
 
-func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryUser) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) GetUsers(ctx context.Context, req *protoUser.MsgQueryUser) (*protoSdk.BaseResponse, error) {
 	queryField := req.QueryFields
 	filter := &model.User{}
 
@@ -255,7 +255,7 @@ func (pc *UserController) GetUsers(ctx context.Context, req *protoUser.MsgQueryU
 	return util.ConvertToGRPC(result)
 }
 
-func (pc *UserController) GetUsersByIds(ctx context.Context, req *protoUser.MsgQueryUserByIds) (*protoSdk.BaseResponse, error) {
+func (pc *UserAPI) GetUsersByIds(ctx context.Context, req *protoUser.MsgQueryUserByIds) (*protoSdk.BaseResponse, error) {
 
 	result := model.UserDB.Query(req.Ids, req.Paginate.Offset, req.Paginate.Limit, nil)
 

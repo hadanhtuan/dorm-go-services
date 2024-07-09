@@ -2,6 +2,7 @@ package apiProperty
 
 import (
 	"context"
+	"fmt"
 	"property-service/internal/model"
 	"property-service/internal/model/enum"
 	"property-service/internal/util"
@@ -14,7 +15,11 @@ import (
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
-func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CheckIfBookingSuccess() {
+	fmt.Println("motherfucker")
+}
+
+func (bc *PropertyAPI) CreateBooking(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
 	if req.CheckInDate < time.Now().Add(-24*time.Hour).Unix() || req.CheckInDate >= req.CheckoutDate {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.BadRequest,
@@ -50,9 +55,9 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	totalPriceBeforeTax := float64(req.NightNumber)*property.NightPrice + property.ServiceFee
 	taxFee := totalPriceBeforeTax * property.TaxPercent
 	totalPrice := totalPriceBeforeTax + taxFee
-	status :=  &enum.BookingStatus.WaitToCheck
+	status := &enum.BookingStatus.WaitToCheck
 	if *property.IsInstantBook == true {
-		status =  &enum.BookingStatus.Success
+		status = &enum.BookingStatus.Success
 	}
 
 	booking := &model.Booking{
@@ -78,8 +83,8 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	}
 
 	propertyUpdated := &model.Property{
-		Status: &enum.PropertyStatus.InBooking,
-		NextCheckInDate: req.CheckInDate,
+		Status:           &enum.PropertyStatus.InBooking,
+		NextCheckInDate:  req.CheckInDate,
 		NextCheckoutDate: req.CheckoutDate,
 	}
 	model.PropertyDB.Update(property, propertyUpdated)
@@ -90,7 +95,7 @@ func (bc *PropertyController) CreateBooking(ctx context.Context, req *protoPrope
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) CountBookingStatus(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CountBookingStatus(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
 
 	filter := &model.Booking{}
 	statuses := util.ConvertEnumToSlice(*enum.BookingStatus)
@@ -140,7 +145,7 @@ func (bc *PropertyController) CountBookingStatus(ctx context.Context, req *proto
 	})
 }
 
-func (bc *PropertyController) GetBooking(ctx context.Context, req *protoProperty.MsgQueryBooking) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) GetBooking(ctx context.Context, req *protoProperty.MsgQueryBooking) (*protoSdk.BaseResponse, error) {
 	queryField := req.QueryFields
 	orderField := req.OrderFields
 

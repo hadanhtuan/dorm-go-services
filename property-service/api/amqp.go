@@ -13,13 +13,13 @@ import (
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
-func (pc *PropertyController) bindingMap() map[string]amqp.CallbackFunc {
+func (pc *PropertyAPI) bindingMap() map[string]amqp.CallbackFunc {
 	return map[string]amqp.CallbackFunc{
 		util.PaymentSuccess: pc.EventPaymentSuccess,
 	}
 }
 
-func (pc *PropertyController) InitRoutingAMQP() {
+func (pc *PropertyAPI) InitRoutingAMQP() {
 	instance := amqp.GetConnection()
 	bindingMap := pc.bindingMap()
 
@@ -31,7 +31,7 @@ func (pc *PropertyController) InitRoutingAMQP() {
 }
 
 // Receive data from payment Service
-func (pc *PropertyController) EventPaymentSuccess(payload []byte) {
+func (pc *PropertyAPI) EventPaymentSuccess(payload []byte) {
 	var data model.Booking
 	json.Unmarshal(payload, &data)
 
@@ -43,7 +43,7 @@ func (pc *PropertyController) EventPaymentSuccess(payload []byte) {
 }
 
 // Sync data to Search Service
-func (bc *PropertyController) SyncProperty(data *model.Property) {
+func (bc *PropertyAPI) SyncProperty(data *model.Property) {
 	encodeData, _ := json.Marshal(data)
 	instant := amqp.GetConnection()
 	err := instant.PublishMessage(util.SEARCH_EXCHANGE, util.PropertyCreated, encodeData)
@@ -54,7 +54,7 @@ func (bc *PropertyController) SyncProperty(data *model.Property) {
 }
 
 // Sync data to Search Service
-func (bc *PropertyController) SyncUpdateProperty(id string) {
+func (bc *PropertyAPI) SyncUpdateProperty(id string) {
 	filter := &model.Property{
 		ID: id,
 	}

@@ -5,13 +5,22 @@ import (
 	protoUser "property-service/proto/user"
 )
 
-type PropertyController struct {
+type PropertyAPI struct {
 	protoProperty.UnimplementedPropertyServiceServer
 
 	//client
 	UserServiceClient protoUser.UserServiceClient
 }
 
-func (pc *PropertyController) InitController() {
-	pc.InitRoutingAMQP()
+func InitAPI(userClient protoUser.UserServiceClient) {
+	pa := &PropertyAPI{
+		UserServiceClient: userClient,
+	}
+	pa.InitRoutingAMQP()
+
+	InstanceAPI = pa
 }
+
+var (
+	InstanceAPI *PropertyAPI
+)

@@ -11,14 +11,14 @@ import (
 	es "github.com/hadanhtuan/go-sdk/db/elasticsearch"
 )
 
-func (pc *SearchController) bindingMap() map[string]amqp.CallbackFunc {
+func (pc *SearchAPI) bindingMap() map[string]amqp.CallbackFunc {
 	return map[string]amqp.CallbackFunc{
 		util.PropertyCreated: pc.EventPropertyCreated,
 		util.PropertyUpdated: pc.EventPropertyUpdated,
 	}
 }
 
-func (pc *SearchController) InitRoutingAMQP() {
+func (pc *SearchAPI) InitRoutingAMQP() {
 	instance := amqp.GetConnection()
 	bindingMap := pc.bindingMap()
 
@@ -29,14 +29,14 @@ func (pc *SearchController) InitRoutingAMQP() {
 	instance.StartConsume(util.SEARCH_QUEUE)
 }
 
-func (pc *SearchController) EventPropertyCreated(payload []byte) {
+func (pc *SearchAPI) EventPropertyCreated(payload []byte) {
 	var data model.Property
 	json.Unmarshal(payload, &data)
 
 	es.IndexDocument(util.PropertyIndex, data.ID, data)
 }
 
-func (ps *SearchController) EventPropertyUpdated(payload []byte) {
+func (ps *SearchAPI) EventPropertyUpdated(payload []byte) {
 	var property model.Property
 
 	json.Unmarshal(payload, &property)

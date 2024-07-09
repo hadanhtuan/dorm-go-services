@@ -19,13 +19,13 @@ import (
 	"github.com/ipinfo/go/v2/ipinfo"
 )
 
-func (sc *SearchController) InitIndex() {
+func (sc *SearchAPI) InitIndex() {
 	for key, value := range util.IndicesMap {
 		es.CreateIndex(key, value)
 	}
 }
 
-func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch.MsgSearchProperty) (*protoSdk.BaseResponse, error) {
+func (sc *SearchAPI) SearchProperty(ctx context.Context, req *protoSearch.MsgSearchProperty) (*protoSdk.BaseResponse, error) {
 	size := int(req.Paginate.Limit)
 	from := (int(req.Paginate.Offset) - 1) * size
 
@@ -240,7 +240,7 @@ func (sc *SearchController) SearchProperty(ctx context.Context, req *protoSearch
 	return util.ConvertToGRPC(result)
 }
 
-func (sc *SearchController) GetNation(ctx context.Context, req *protoSearch.MsgIP) (*protoSdk.BaseResponse, error) {
+func (sc *SearchAPI) GetNation(ctx context.Context, req *protoSearch.MsgIP) (*protoSdk.BaseResponse, error) {
 	size := 0
 	field := "nationCode"
 
@@ -285,7 +285,7 @@ func (sc *SearchController) GetNation(ctx context.Context, req *protoSearch.MsgI
 	})
 }
 
-func (sc *SearchController) RenderSuggestion(ctx context.Context, req *protoSearch.MsgSuggestion) (*protoSdk.BaseResponse, error) {
+func (sc *SearchAPI) RenderSuggestion(ctx context.Context, req *protoSearch.MsgSuggestion) (*protoSdk.BaseResponse, error) {
 	var wg sync.WaitGroup
 
 	type SuggestionResponse struct {
@@ -325,7 +325,7 @@ func (sc *SearchController) RenderSuggestion(ctx context.Context, req *protoSear
 
 }
 
-func (sc *SearchController) SearchTitlePrefix(ctx context.Context, req *protoSearch.MessageSearchPrefix) (*protoSdk.BaseResponse, error) {
+func (sc *SearchAPI) SearchTitlePrefix(ctx context.Context, req *protoSearch.MessageSearchPrefix) (*protoSdk.BaseResponse, error) {
 
 	size := int(req.Paginate.Limit)
 	from := (int(req.Paginate.Offset) - 1) * size
@@ -379,7 +379,7 @@ func (sc *SearchController) SearchTitlePrefix(ctx context.Context, req *protoSea
 	})
 }
 
-func (sc *SearchController) GetPopular(from, size *int) ([]string, error) {
+func (sc *SearchAPI) GetPopular(from, size *int) ([]string, error) {
 	query := &search.Request{
 		From: from,
 		Size: size,
@@ -415,7 +415,7 @@ func (sc *SearchController) GetPopular(from, size *int) ([]string, error) {
 	return popularly, nil
 }
 
-func (sc *SearchController) GetCountryByIp(ip string) (string, error) {
+func (sc *SearchAPI) GetCountryByIp(ip string) (string, error) {
 	const token = "33e32a0a50947a"
 	client := ipinfo.NewClient(nil, nil, token)
 	info, err := client.GetIPInfo(net.ParseIP(ip))

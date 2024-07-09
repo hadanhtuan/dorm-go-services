@@ -8,7 +8,7 @@ import (
 	"context"
 )
 
-func (bc *PropertyController) CreateAmenity(ctx context.Context, req *protoProperty.MsgAmenity) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CreateAmenity(ctx context.Context, req *protoProperty.MsgAmenity) (*protoSdk.BaseResponse, error) {
 	amenity := &model.Amenity{
 		Name:        req.Name,
 		Description: req.Description,
@@ -20,7 +20,7 @@ func (bc *PropertyController) CreateAmenity(ctx context.Context, req *protoPrope
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) UpdateAmenity(ctx context.Context, req *protoProperty.MsgAmenity) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) UpdateAmenity(ctx context.Context, req *protoProperty.MsgAmenity) (*protoSdk.BaseResponse, error) {
 	amenity := &model.Amenity{
 		ID: req.Id,
 	}
@@ -36,7 +36,7 @@ func (bc *PropertyController) UpdateAmenity(ctx context.Context, req *protoPrope
 
 }
 
-func (bc *PropertyController) DeleteAmenity(ctx context.Context, req *protoProperty.MsgId) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) DeleteAmenity(ctx context.Context, req *protoProperty.MsgId) (*protoSdk.BaseResponse, error) {
 	amenity := &model.Amenity{
 		ID: req.Id,
 	}
@@ -45,7 +45,7 @@ func (bc *PropertyController) DeleteAmenity(ctx context.Context, req *protoPrope
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) GetAmenity(ctx context.Context, req *protoProperty.MsgQueryAmenity) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) GetAmenity(ctx context.Context, req *protoProperty.MsgQueryAmenity) (*protoSdk.BaseResponse, error) {
 	filter := &model.Amenity{}
 
 	if req.QueryFields.Id != "" {

@@ -14,7 +14,7 @@ import (
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
-func (bc *PropertyController) GetProperty(ctx context.Context, req *protoProperty.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) GetProperty(ctx context.Context, req *protoProperty.MsgQueryProperty) (*protoSdk.BaseResponse, error) {
 	filter := &model.Property{}
 
 	if req.QueryFields.Id != nil {
@@ -48,7 +48,7 @@ func (bc *PropertyController) GetProperty(ctx context.Context, req *protoPropert
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) CountPropertyStatus(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CountPropertyStatus(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
 
 	filter := &model.Property{}
 	statuses := util.ConvertEnumToSlice(*enum.PropertyStatus)
@@ -95,7 +95,7 @@ func (bc *PropertyController) CountPropertyStatus(ctx context.Context, req *prot
 	})
 }
 
-func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) CreateProperty(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
 	propertyType := enum.PropertyTypeValue(req.PropertyType)
 	amenities := util.ConvertSlice[*model.Amenity](req.Amenities)
 
@@ -152,7 +152,7 @@ func (bc *PropertyController) CreateProperty(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) UpdateProperty(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) UpdateProperty(ctx context.Context, req *protoProperty.MsgProperty) (*protoSdk.BaseResponse, error) {
 	property := &model.Property{
 		ID: *req.Id,
 	}
@@ -200,7 +200,7 @@ func (bc *PropertyController) UpdateProperty(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-func (bc *PropertyController) DeleteProperty(ctx context.Context, req *protoProperty.MsgDeleteProperty) (*protoSdk.BaseResponse, error) {
+func (bc *PropertyAPI) DeleteProperty(ctx context.Context, req *protoProperty.MsgDeleteProperty) (*protoSdk.BaseResponse, error) {
 	propertyId := req.PropertyId
 	property := &model.Property{
 		ID: propertyId,
@@ -210,7 +210,7 @@ func (bc *PropertyController) DeleteProperty(ctx context.Context, req *protoProp
 	return util.ConvertToGRPC(result)
 }
 
-// func (bc *PropertyController) MapMockData(limit int32, offset int32) {
+// func (bc *PropertyAPI) MapMockData(limit int32, offset int32) {
 // 	result := model.MockPropertyDB.Query(nil, offset, limit, nil)
 // 	data := result.Data.([]*model.MockProperty)
 
