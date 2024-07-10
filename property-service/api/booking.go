@@ -10,7 +10,6 @@ import (
 	protoSdk "property-service/proto/sdk"
 	"sync"
 	"time"
-
 	"github.com/hadanhtuan/go-sdk/common"
 	"github.com/hadanhtuan/go-sdk/db/orm"
 )

@@ -12,10 +12,8 @@ type PropertyAPI struct {
 	UserServiceClient protoUser.UserServiceClient
 }
 
-func InitAPI(userClient protoUser.UserServiceClient) {
-	pa := &PropertyAPI{
-		UserServiceClient: userClient,
-	}
+func InitAPI() {
+	pa := &PropertyAPI{}
 	pa.InitRoutingAMQP()
 
 	InstanceAPI = pa

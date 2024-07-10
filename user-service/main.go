@@ -2,12 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
 	api "user-service/api"
 	"user-service/internal/model"
 	userProto "user-service/proto/user"
-
 	"github.com/hadanhtuan/go-sdk"
 	"github.com/hadanhtuan/go-sdk/config"
 	"github.com/hadanhtuan/go-sdk/db/orm"
@@ -30,6 +27,8 @@ func main() {
 
 	// Init GRPC
 	InitGRPCServer(app)
+
+	app.Start()
 }
 
 func onDBConnected(db *gorm.DB) {
@@ -39,27 +38,12 @@ func onDBConnected(db *gorm.DB) {
 }
 
 func InitGRPCServer(app *sdk.App) error {
-	userServiceHost := fmt.Sprintf(
-		"%s:%s",
-		app.Config.GRPC.UserServiceHost,
-		app.Config.GRPC.UserServicePort,
-	)
-	lis, err := net.Listen("tcp", userServiceHost)
-	if err != nil {
-		log.Fatalf("Failed to listen for gRPC: %v", err)
-	}
-
 	s := grpc.NewServer()
 
 	api.InitAPI()
 	userProto.RegisterUserServiceServer(s, api.InstanceAPI)
 
-	log.Printf("[ User service ] started on %s", userServiceHost)
-
-	err = s.Serve(lis)
-	if err != nil {
-		panic(err)
-	}
+	app.NewGRPCServer(s, app.Config.GRPC.UserServiceHost, app.Config.GRPC.UserServicePort)
 
 	return nil
 }
