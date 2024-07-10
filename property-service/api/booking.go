@@ -3,6 +3,8 @@ package apiProperty
 import (
 	"context"
 	"fmt"
+	"github.com/hadanhtuan/go-sdk/common"
+	"github.com/hadanhtuan/go-sdk/db/orm"
 	"property-service/internal/model"
 	"property-service/internal/model/enum"
 	"property-service/internal/util"
@@ -10,8 +12,6 @@ import (
 	protoSdk "property-service/proto/sdk"
 	"sync"
 	"time"
-	"github.com/hadanhtuan/go-sdk/common"
-	"github.com/hadanhtuan/go-sdk/db/orm"
 )
 
 func (bc *PropertyAPI) CheckIfBookingSuccess() {
@@ -55,7 +55,7 @@ func (bc *PropertyAPI) CreateBooking(ctx context.Context, req *protoProperty.Msg
 	taxFee := totalPriceBeforeTax * property.TaxPercent
 	totalPrice := totalPriceBeforeTax + taxFee
 	status := &enum.BookingStatus.WaitToCheck
-	if *property.IsInstantBook == true {
+	if property.IsInstantBook != nil && *property.IsInstantBook {
 		status = &enum.BookingStatus.Success
 	}
 
