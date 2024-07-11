@@ -99,9 +99,16 @@ func (pc *UserAPI) Register(ctx context.Context, req *protoUser.MsgUser) (*proto
 
 func (pc *UserAPI) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*protoSdk.BaseResponse, error) {
 	user := &model.User{}
+	db := model.UserDB.DB.Table(model.UserDB.TableName)
 
 	if req.Email != "" {
 		user.Email = req.Email
+		db.Where("email = ?", req.Email)
+	}
+
+	if req.Username != "" {
+		user.Username = req.Username
+		db.Or("username = ?", req.Username)
 	}
 
 	if req.IsActive != nil {
@@ -115,6 +122,24 @@ func (pc *UserAPI) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*pro
 	if req.Password != "" {
 		hashPassword, _ := sdk.HashPassword(req.Password)
 		user.Password = hashPassword
+	}
+
+	if req.Phone != "" {
+		user.Phone = req.Phone
+		db.Or("phone = ?", req.Phone)
+
+	}
+
+	var previousUser model.User
+	db.First(&previousUser)
+
+	fmt.Println(previousUser.ID)
+
+	if previousUser.ID != req.Id {
+		return util.ConvertToGRPC(&common.APIResponse{
+			Status:  common.APIStatus.ServerError,
+			Message: "Error update user. Email/phone/username already exist",
+		})
 	}
 
 	result := model.UserDB.Update(&model.User{ID: req.Id}, user)
