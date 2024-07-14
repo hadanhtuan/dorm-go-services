@@ -18,6 +18,27 @@ func (bc *PropertyAPI) CheckIfBookingSuccess() {
 	fmt.Println("motherfucker")
 }
 
+func (bc *PropertyAPI) AnalyzeBooking(ctx context.Context, req *protoProperty.MsgQueryBooking) (*protoSdk.BaseResponse, error) {
+	type SumBooking struct {
+		Amount float64 `json:"amount"`
+		Time string   `json:"time"`
+	}
+	var result []SumBooking
+
+	queryString := `select sum(total_price) as amount,     
+    TO_CHAR(DATE_TRUNC('month', TO_TIMESTAMP(checkin_date)), 'MM-YYYY') AS time
+	from booking
+	group by  
+    TO_CHAR(DATE_TRUNC('month', TO_TIMESTAMP(checkin_date)), 'MM-YYYY') `
+
+	model.BookingDB.DB.Table(model.BookingDB.TableName).Raw(queryString).Find(&result)
+
+	return util.ConvertToGRPC(&common.APIResponse{
+		Data: result,
+		Status: common.APIStatus.Ok,
+	})
+}
+
 func (bc *PropertyAPI) CreateBooking(ctx context.Context, req *protoProperty.MsgBooking) (*protoSdk.BaseResponse, error) {
 	if req.CheckInDate < time.Now().Add(-24*time.Hour).Unix() || req.CheckInDate >= req.CheckoutDate {
 		return util.ConvertToGRPC(&common.APIResponse{

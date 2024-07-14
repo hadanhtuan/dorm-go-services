@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PropertyServiceClient interface {
 	// Booking
 	GetBooking(ctx context.Context, in *MsgQueryBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
+	AnalyzeBooking(ctx context.Context, in *MsgQueryBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	CountBookingStatus(ctx context.Context, in *MsgBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	CreateBooking(ctx context.Context, in *MsgBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
 	CancelBooking(ctx context.Context, in *MsgBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error)
@@ -61,6 +62,15 @@ func NewPropertyServiceClient(cc grpc.ClientConnInterface) PropertyServiceClient
 func (c *propertyServiceClient) GetBooking(ctx context.Context, in *MsgQueryBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
 	out := new(sdk.BaseResponse)
 	err := c.cc.Invoke(ctx, "/propertyService.propertyService/GetBooking", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *propertyServiceClient) AnalyzeBooking(ctx context.Context, in *MsgQueryBooking, opts ...grpc.CallOption) (*sdk.BaseResponse, error) {
+	out := new(sdk.BaseResponse)
+	err := c.cc.Invoke(ctx, "/propertyService.propertyService/AnalyzeBooking", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -244,6 +254,7 @@ func (c *propertyServiceClient) GetFavorite(ctx context.Context, in *MsgQueryFav
 type PropertyServiceServer interface {
 	// Booking
 	GetBooking(context.Context, *MsgQueryBooking) (*sdk.BaseResponse, error)
+	AnalyzeBooking(context.Context, *MsgQueryBooking) (*sdk.BaseResponse, error)
 	CountBookingStatus(context.Context, *MsgBooking) (*sdk.BaseResponse, error)
 	CreateBooking(context.Context, *MsgBooking) (*sdk.BaseResponse, error)
 	CancelBooking(context.Context, *MsgBooking) (*sdk.BaseResponse, error)
@@ -276,6 +287,9 @@ type UnimplementedPropertyServiceServer struct {
 
 func (UnimplementedPropertyServiceServer) GetBooking(context.Context, *MsgQueryBooking) (*sdk.BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBooking not implemented")
+}
+func (UnimplementedPropertyServiceServer) AnalyzeBooking(context.Context, *MsgQueryBooking) (*sdk.BaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AnalyzeBooking not implemented")
 }
 func (UnimplementedPropertyServiceServer) CountBookingStatus(context.Context, *MsgBooking) (*sdk.BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountBookingStatus not implemented")
@@ -361,6 +375,24 @@ func _PropertyService_GetBooking_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PropertyServiceServer).GetBooking(ctx, req.(*MsgQueryBooking))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PropertyService_AnalyzeBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgQueryBooking)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServiceServer).AnalyzeBooking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/propertyService.propertyService/AnalyzeBooking",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServiceServer).AnalyzeBooking(ctx, req.(*MsgQueryBooking))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -717,6 +749,10 @@ var PropertyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBooking",
 			Handler:    _PropertyService_GetBooking_Handler,
+		},
+		{
+			MethodName: "AnalyzeBooking",
+			Handler:    _PropertyService_AnalyzeBooking_Handler,
 		},
 		{
 			MethodName: "CountBookingStatus",

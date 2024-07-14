@@ -133,8 +133,6 @@ func (pc *UserAPI) UpdateUser(ctx context.Context, req *protoUser.MsgUser) (*pro
 	var previousUser model.User
 	db.First(&previousUser)
 
-	fmt.Println(previousUser.ID)
-
 	if previousUser.ID != req.Id {
 		return util.ConvertToGRPC(&common.APIResponse{
 			Status:  common.APIStatus.ServerError,

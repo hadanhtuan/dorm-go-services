@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"search-service/internal/model"
 	"search-service/internal/util"
 
@@ -40,9 +39,6 @@ func (ps *SearchAPI) EventPropertyUpdated(payload []byte) {
 	var property model.Property
 
 	json.Unmarshal(payload, &property)
-
-	fmt.Println(property.ID)
-	fmt.Println(property.HostName)
 
 	// byteMerged, _ := json.Marshal(property)
 
