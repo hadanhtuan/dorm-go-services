@@ -39,8 +39,8 @@ func main() {
 	InitGRPCServer(app)
 
 	//Cronjob
-	bookingCron := app.NewCronJob()
-	bookingCron.SetCronJob(api.InstanceAPI.CheckIfBookingSuccess, 5, 2)
+	// bookingCron := app.NewCronJob()
+	// bookingCron.SetCronJob(api.InstanceAPI.CheckIfBookingSuccess, 5, 2)
 
 	app.Start()
 }

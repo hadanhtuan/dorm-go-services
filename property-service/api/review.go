@@ -3,6 +3,7 @@ package apiProperty
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"property-service/internal/model"
 	"property-service/internal/util"
 	protoProperty "property-service/proto/property"
@@ -13,10 +14,11 @@ import (
 )
 
 func (bc *PropertyAPI) CreateReview(ctx context.Context, req *protoProperty.MsgCreateReview) (*protoSdk.BaseResponse, error) {
+	fmt.Println(req.OverallRating)
 	review := &model.Review{
 		UserId:     req.UserId,
 		PropertyId: req.PropertyId,
-		Rating:     req.Rating,
+		Rating:     req.OverallRating,
 		Comment:    req.Comment,
 		ImageUrl:   req.ImageUrl,
 	}
